@@ -1,0 +1,387 @@
+<?xml version="1.0" ?>
+<sdf version="1.8">
+  <model name="px5_drone">
+    <pose>0 0 0.10 0 0 0</pose>
+    <static>false</static>
+
+    <!-- Main Airframe Link -->
+    <link name="X3/base_link">
+      <pose>0 0 0 0 0 0</pose>
+      <inertial>
+        <pose>0 0 0 0 0 0</pose>
+        <mass>1.5</mass>
+        <inertia>
+          <ixx>0.0347563</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>0.07</iyy>
+          <iyz>0</iyz>
+          <izz>0.0977</izz>
+        </inertia>
+      </inertial>
+      <collision name="X3/base_link_collision">
+        <pose>0 0 0 0 0 0</pose>
+        <geometry>
+          <box>
+            <size>0.47 0.47 0.11</size>
+          </box>
+        </geometry>
+      </collision>
+      <visual name="X3/base_link_visual">
+        <pose>0 0 0 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://px5_drone/meshes/x3.dae</uri>
+          </mesh>
+        </geometry>
+      </visual>
+
+      <!-- 2D LiDAR Sensor (for Indoor SLAM & Obstacle Detection) -->
+      <sensor name="gpu_lidar" type="gpu_lidar">
+        <pose>0 0 0.08 0 0 0</pose>
+        <topic>/scan</topic>
+        <update_rate>10</update_rate>
+        <lidar>
+          <scan>
+            <horizontal>
+              <samples>360</samples>
+              <resolution>1</resolution>
+              <min_angle>-3.14159</min_angle>
+              <max_angle>3.14159</max_angle>
+            </horizontal>
+          </scan>
+          <range>
+            <min>0.15</min>
+            <max>15.0</max>
+            <resolution>0.01</resolution>
+          </range>
+          <noise>
+            <type>gaussian</type>
+            <mean>0.0</mean>
+            <stddev>0.01</stddev>
+          </noise>
+        </lidar>
+        <always_on>true</always_on>
+        <visualize>false</visualize>
+      </sensor>
+
+      <!-- Forward-Facing RGB Camera (for live GCS feed & victim identification) -->
+      <sensor name="front_camera" type="camera">
+        <pose>0.18 0 0.02 0 0 0</pose>
+        <topic>/camera/image_raw</topic>
+        <update_rate>30</update_rate>
+        <camera>
+          <horizontal_fov>1.3962634</horizontal_fov>
+          <image>
+            <width>640</width>
+            <height>480</height>
+            <format>R8G8B8</format>
+          </image>
+          <clip>
+            <near>0.1</near>
+            <far>15.0</far>
+          </clip>
+        </camera>
+        <always_on>true</always_on>
+        <visualize>false</visualize>
+      </sensor>
+
+      <!-- Onboard IMU Sensor -->
+      <sensor name="imu_sensor" type="imu">
+        <pose>0 0 0 0 0 0</pose>
+        <topic>/imu</topic>
+        <always_on>true</always_on>
+        <update_rate>100</update_rate>
+      </sensor>
+    </link>
+
+    <!-- Rotor 0 (Front-Right, CCW) -->
+    <link name="X3/rotor_0">
+      <pose>0.13 -0.22 0.023 0 0 0</pose>
+      <inertial>
+        <mass>0.005</mass>
+        <inertia>
+          <ixx>9.75e-07</ixx><ixy>0</ixy><ixz>0</ixz>
+          <iyy>4.17e-05</iyy><iyz>0</iyz>
+          <izz>4.26e-05</izz>
+        </inertia>
+      </inertial>
+      <collision name="X3/rotor_0_collision">
+        <geometry><cylinder><length>0.005</length><radius>0.1</radius></cylinder></geometry>
+      </collision>
+      <visual name="X3/rotor_0_visual">
+        <geometry>
+          <mesh>
+            <scale>0.1 0.1 0.1</scale>
+            <uri>model://px5_drone/meshes/propeller_ccw.dae</uri>
+          </mesh>
+        </geometry>
+        <material>
+          <ambient>0.1 0.2 0.8 1</ambient>
+          <diffuse>0.1 0.3 0.9 1</diffuse>
+        </material>
+      </visual>
+      <gravity>1</gravity>
+    </link>
+    <joint name="X3/rotor_0_joint" type="revolute">
+      <child>X3/rotor_0</child>
+      <parent>X3/base_link</parent>
+      <axis>
+        <xyz>0 0 1</xyz>
+        <limit><lower>-1e+16</lower><upper>1e+16</upper></limit>
+      </axis>
+    </joint>
+
+    <!-- Rotor 1 (Back-Left, CCW) -->
+    <link name="X3/rotor_1">
+      <pose>-0.13 0.2 0.023 0 0 0</pose>
+      <inertial>
+        <mass>0.005</mass>
+        <inertia>
+          <ixx>9.75e-07</ixx><ixy>0</ixy><ixz>0</ixz>
+          <iyy>4.17e-05</iyy><iyz>0</iyz>
+          <izz>4.26e-05</izz>
+        </inertia>
+      </inertial>
+      <collision name="X3/rotor_1_collision">
+        <geometry><cylinder><length>0.005</length><radius>0.1</radius></cylinder></geometry>
+      </collision>
+      <visual name="X3/rotor_1_visual">
+        <geometry>
+          <mesh>
+            <scale>0.1 0.1 0.1</scale>
+            <uri>model://px5_drone/meshes/propeller_ccw.dae</uri>
+          </mesh>
+        </geometry>
+        <material>
+          <ambient>0.8 0.1 0.1 1</ambient>
+          <diffuse>0.9 0.1 0.1 1</diffuse>
+        </material>
+      </visual>
+      <gravity>1</gravity>
+    </link>
+    <joint name="X3/rotor_1_joint" type="revolute">
+      <child>X3/rotor_1</child>
+      <parent>X3/base_link</parent>
+      <axis>
+        <xyz>0 0 1</xyz>
+        <limit><lower>-1e+16</lower><upper>1e+16</upper></limit>
+      </axis>
+    </joint>
+
+    <!-- Rotor 2 (Front-Left, CW) -->
+    <link name="X3/rotor_2">
+      <pose>0.13 0.22 0.023 0 0 0</pose>
+      <inertial>
+        <mass>0.005</mass>
+        <inertia>
+          <ixx>9.75e-07</ixx><ixy>0</ixy><ixz>0</ixz>
+          <iyy>4.17e-05</iyy><iyz>0</iyz>
+          <izz>4.26e-05</izz>
+        </inertia>
+      </inertial>
+      <collision name="X3/rotor_2_collision">
+        <geometry><cylinder><length>0.005</length><radius>0.1</radius></cylinder></geometry>
+      </collision>
+      <visual name="X3/rotor_2_visual">
+        <geometry>
+          <mesh>
+            <scale>0.1 0.1 0.1</scale>
+            <uri>model://px5_drone/meshes/propeller_cw.dae</uri>
+          </mesh>
+        </geometry>
+        <material>
+          <ambient>0.1 0.2 0.8 1</ambient>
+          <diffuse>0.1 0.3 0.9 1</diffuse>
+        </material>
+      </visual>
+      <gravity>1</gravity>
+    </link>
+    <joint name="X3/rotor_2_joint" type="revolute">
+      <child>X3/rotor_2</child>
+      <parent>X3/base_link</parent>
+      <axis>
+        <xyz>0 0 1</xyz>
+        <limit><lower>-1e+16</lower><upper>1e+16</upper></limit>
+      </axis>
+    </joint>
+
+    <!-- Rotor 3 (Back-Right, CW) -->
+    <link name="X3/rotor_3">
+      <pose>-0.13 -0.2 0.023 0 0 0</pose>
+      <inertial>
+        <mass>0.005</mass>
+        <inertia>
+          <ixx>9.75e-07</ixx><ixy>0</ixy><ixz>0</ixz>
+          <iyy>4.17e-05</iyy><iyz>0</iyz>
+          <izz>4.26e-05</izz>
+        </inertia>
+      </inertial>
+      <collision name="X3/rotor_3_collision">
+        <geometry><cylinder><length>0.005</length><radius>0.1</radius></cylinder></geometry>
+      </collision>
+      <visual name="X3/rotor_3_visual">
+        <geometry>
+          <mesh>
+            <scale>0.1 0.1 0.1</scale>
+            <uri>model://px5_drone/meshes/propeller_cw.dae</uri>
+          </mesh>
+        </geometry>
+        <material>
+          <ambient>0.8 0.1 0.1 1</ambient>
+          <diffuse>0.9 0.1 0.1 1</diffuse>
+        </material>
+      </visual>
+      <gravity>1</gravity>
+    </link>
+    <joint name="X3/rotor_3_joint" type="revolute">
+      <child>X3/rotor_3</child>
+      <parent>X3/base_link</parent>
+      <axis>
+        <xyz>0 0 1</xyz>
+        <limit><lower>-1e+16</lower><upper>1e+16</upper></limit>
+      </axis>
+    </joint>
+
+    <!-- ==================== PLUGINS ==================== -->
+    <!-- Multicopter Motor Models (Aerodynamic thrust generation) -->
+    <plugin
+      filename="gz-sim-multicopter-motor-model-system"
+      name="gz::sim::systems::MulticopterMotorModel">
+      <robotNamespace>X3</robotNamespace>
+      <jointName>X3/rotor_0_joint</jointName>
+      <linkName>X3/rotor_0</linkName>
+      <turningDirection>ccw</turningDirection>
+      <timeConstantUp>0.0125</timeConstantUp>
+      <timeConstantDown>0.025</timeConstantDown>
+      <maxRotVelocity>800.0</maxRotVelocity>
+      <motorConstant>8.54858e-06</motorConstant>
+      <momentConstant>0.016</momentConstant>
+      <commandSubTopic>gazebo/command/motor_speed</commandSubTopic>
+      <actuator_number>0</actuator_number>
+      <rotorDragCoefficient>8.06428e-05</rotorDragCoefficient>
+      <rollingMomentCoefficient>1e-06</rollingMomentCoefficient>
+      <motorSpeedPubTopic>motor_speed/0</motorSpeedPubTopic>
+      <rotorVelocitySlowdownSim>10</rotorVelocitySlowdownSim>
+      <motorType>velocity</motorType>
+    </plugin>
+
+    <plugin
+      filename="gz-sim-multicopter-motor-model-system"
+      name="gz::sim::systems::MulticopterMotorModel">
+      <robotNamespace>X3</robotNamespace>
+      <jointName>X3/rotor_1_joint</jointName>
+      <linkName>X3/rotor_1</linkName>
+      <turningDirection>ccw</turningDirection>
+      <timeConstantUp>0.0125</timeConstantUp>
+      <timeConstantDown>0.025</timeConstantDown>
+      <maxRotVelocity>800.0</maxRotVelocity>
+      <motorConstant>8.54858e-06</motorConstant>
+      <momentConstant>0.016</momentConstant>
+      <commandSubTopic>gazebo/command/motor_speed</commandSubTopic>
+      <actuator_number>1</actuator_number>
+      <rotorDragCoefficient>8.06428e-05</rotorDragCoefficient>
+      <rollingMomentCoefficient>1e-06</rollingMomentCoefficient>
+      <motorSpeedPubTopic>motor_speed/1</motorSpeedPubTopic>
+      <rotorVelocitySlowdownSim>10</rotorVelocitySlowdownSim>
+      <motorType>velocity</motorType>
+    </plugin>
+
+    <plugin
+      filename="gz-sim-multicopter-motor-model-system"
+      name="gz::sim::systems::MulticopterMotorModel">
+      <robotNamespace>X3</robotNamespace>
+      <jointName>X3/rotor_2_joint</jointName>
+      <linkName>X3/rotor_2</linkName>
+      <turningDirection>cw</turningDirection>
+      <timeConstantUp>0.0125</timeConstantUp>
+      <timeConstantDown>0.025</timeConstantDown>
+      <maxRotVelocity>800.0</maxRotVelocity>
+      <motorConstant>8.54858e-06</motorConstant>
+      <momentConstant>0.016</momentConstant>
+      <commandSubTopic>gazebo/command/motor_speed</commandSubTopic>
+      <actuator_number>2</actuator_number>
+      <rotorDragCoefficient>8.06428e-05</rotorDragCoefficient>
+      <rollingMomentCoefficient>1e-06</rollingMomentCoefficient>
+      <motorSpeedPubTopic>motor_speed/2</motorSpeedPubTopic>
+      <rotorVelocitySlowdownSim>10</rotorVelocitySlowdownSim>
+      <motorType>velocity</motorType>
+    </plugin>
+
+    <plugin
+      filename="gz-sim-multicopter-motor-model-system"
+      name="gz::sim::systems::MulticopterMotorModel">
+      <robotNamespace>X3</robotNamespace>
+      <jointName>X3/rotor_3_joint</jointName>
+      <linkName>X3/rotor_3</linkName>
+      <turningDirection>cw</turningDirection>
+      <timeConstantUp>0.0125</timeConstantUp>
+      <timeConstantDown>0.025</timeConstantDown>
+      <maxRotVelocity>800.0</maxRotVelocity>
+      <motorConstant>8.54858e-06</motorConstant>
+      <momentConstant>0.016</momentConstant>
+      <commandSubTopic>gazebo/command/motor_speed</commandSubTopic>
+      <actuator_number>3</actuator_number>
+      <rotorDragCoefficient>8.06428e-05</rotorDragCoefficient>
+      <rollingMomentCoefficient>1e-06</rollingMomentCoefficient>
+      <motorSpeedPubTopic>motor_speed/3</motorSpeedPubTopic>
+      <rotorVelocitySlowdownSim>10</rotorVelocitySlowdownSim>
+      <motorType>velocity</motorType>
+    </plugin>
+
+    <!-- Inbuilt Multicopter Velocity Controller (Controls flight via twist velocities) -->
+    <plugin
+      filename="gz-sim-multicopter-control-system"
+      name="gz::sim::systems::MulticopterVelocityControl">
+      <robotNamespace>X3</robotNamespace>
+      <commandSubTopic>gazebo/command/twist</commandSubTopic>
+      <enableSubTopic>enable</enableSubTopic>
+      <comLinkName>X3/base_link</comLinkName>
+      <velocityGain>2.7 2.7 2.7</velocityGain>
+      <attitudeGain>2 3 0.15</attitudeGain>
+      <angularRateGain>0.4 0.52 0.18</angularRateGain>
+      <maximumLinearAcceleration>1.5 1.5 1.5</maximumLinearAcceleration>
+      <maximumLinearVelocity>1.5 1.5 0.8</maximumLinearVelocity>
+      <maximumAngularVelocity>1.5 1.5 1.5</maximumAngularVelocity>
+
+      <rotorConfiguration>
+        <rotor>
+          <jointName>X3/rotor_0_joint</jointName>
+          <forceConstant>8.54858e-06</forceConstant>
+          <momentConstant>0.016</momentConstant>
+          <direction>1</direction>
+        </rotor>
+        <rotor>
+          <jointName>X3/rotor_1_joint</jointName>
+          <forceConstant>8.54858e-06</forceConstant>
+          <momentConstant>0.016</momentConstant>
+          <direction>1</direction>
+        </rotor>
+        <rotor>
+          <jointName>X3/rotor_2_joint</jointName>
+          <forceConstant>8.54858e-06</forceConstant>
+          <momentConstant>0.016</momentConstant>
+          <direction>-1</direction>
+        </rotor>
+        <rotor>
+          <jointName>X3/rotor_3_joint</jointName>
+          <forceConstant>8.54858e-06</forceConstant>
+          <momentConstant>0.016</momentConstant>
+          <direction>-1</direction>
+        </rotor>
+      </rotorConfiguration>
+    </plugin>
+
+    <!-- Odometry Publisher -->
+    <plugin
+      filename="gz-sim-odometry-publisher-system"
+      name="gz::sim::systems::OdometryPublisher">
+      <dimensions>3</dimensions>
+      <odom_topic>/model/X3/odometry</odom_topic>
+      <odom_frame>odom</odom_frame>
+      <robot_base_frame>X3/base_link</robot_base_frame>
+    </plugin>
+
+  </model>
+</sdf>

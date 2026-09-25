@@ -1,0 +1,21 @@
+# ROS 2 build & log artifacts
+build/
+install/
+log/
+
+# IDE & Editor files
+.vscode/
+.idea/
+*.swp
+*~
+
+# Workspace symlinks
+/nidar_gazebo
+
+# Python cache
+__pycache__/
+*.py[cod]
+
+# OS generated files
+.DS_Store
+Thumbs.db

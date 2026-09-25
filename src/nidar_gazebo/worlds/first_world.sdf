@@ -1,0 +1,811 @@
+<?xml version="1.0" ?>
+<sdf version="1.8">
+  <world name="nidar_airmouse_arena">
+    <!-- Physics engine configuration -->
+    <physics name="1ms" type="ignored">
+      <max_step_size>0.001</max_step_size>
+      <real_time_factor>1.0</real_time_factor>
+    </physics>
+
+    <!-- Essential Gazebo Sim plugins -->
+    <plugin filename="gz-sim-physics-system" name="gz::sim::systems::Physics"/>
+    <plugin filename="gz-sim-user-commands-system" name="gz::sim::systems::UserCommands"/>
+    <plugin filename="gz-sim-scene-broadcaster-system" name="gz::sim::systems::SceneBroadcaster"/>
+    <plugin filename="gz-sim-sensors-system" name="gz::sim::systems::Sensors">
+      <render_engine>ogre2</render_engine>
+    </plugin>
+    <plugin filename="gz-sim-imu-system" name="gz::sim::systems::Imu"/>
+
+    <!-- GUI Camera Default Pose (Elevated perspective matching user photo overlooking ENTRY and corridors) -->
+    <gui fullscreen="0">
+      <camera name="user_camera">
+        <pose>-11.0 -11.0 9.0 0 0.62 0.785</pose>
+        <view_controller>orbit</view_controller>
+      </camera>
+    </gui>
+
+    <!-- Main Lighting (Diffuse indoor warehouse lighting) -->
+    <light type="directional" name="sun">
+      <cast_shadows>true</cast_shadows>
+      <pose>0 0 15 0 0 0</pose>
+      <diffuse>0.88 0.88 0.88 1</diffuse>
+      <specular>0.2 0.2 0.2 1</specular>
+      <attenuation>
+        <range>1000</range>
+        <constant>0.9</constant>
+        <linear>0.01</linear>
+        <quadratic>0.001</quadratic>
+      </attenuation>
+      <direction>-0.3 0.2 -0.9</direction>
+    </light>
+
+    <!-- Warehouse Hall Ambient Overhead Lights -->
+    <light type="point" name="hall_light_1">
+      <pose>-4.0 -4.0 4.5 0 0 0</pose>
+      <diffuse>0.75 0.75 0.72 1</diffuse>
+      <specular>0.2 0.2 0.2 1</specular>
+      <attenuation><range>15</range><constant>0.6</constant><linear>0.05</linear><quadratic>0.01</quadratic></attenuation>
+    </light>
+    <light type="point" name="hall_light_2">
+      <pose>4.0 4.0 4.5 0 0 0</pose>
+      <diffuse>0.75 0.75 0.72 1</diffuse>
+      <specular>0.2 0.2 0.2 1</specular>
+      <attenuation><range>15</range><constant>0.6</constant><linear>0.05</linear><quadratic>0.01</quadratic></attenuation>
+    </light>
+    <light type="point" name="hall_light_3">
+      <pose>0.0 0.0 4.5 0 0 0</pose>
+      <diffuse>0.80 0.80 0.78 1</diffuse>
+      <specular>0.25 0.25 0.25 1</specular>
+      <attenuation><range>18</range><constant>0.5</constant><linear>0.04</linear><quadratic>0.008</quadratic></attenuation>
+    </light>
+
+    <!-- ==================== WAREHOUSE FLOOR (15m x 15m POLISHED CONCRETE) ==================== -->
+    <model name="arena_ground">
+      <static>true</static>
+      <link name="link">
+        <collision name="collision">
+          <geometry>
+            <plane>
+              <normal>0 0 1</normal>
+              <size>16 16</size>
+            </plane>
+          </geometry>
+        </collision>
+        <visual name="floor_base">
+          <geometry>
+            <plane>
+              <normal>0 0 1</normal>
+              <size>16 16</size>
+            </plane>
+          </geometry>
+          <material>
+            <!-- Smooth polished warehouse concrete tone matching photo -->
+            <ambient>0.62 0.63 0.65 1</ambient>
+            <diffuse>0.68 0.69 0.71 1</diffuse>
+            <specular>0.25 0.25 0.25 1</specular>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- Faint floor grid lines -->
+    <model name="floor_guide_lines">
+      <static>true</static>
+      <pose>0 0 0.002 0 0 0</pose>
+      <link name="link">
+        <visual name="axis_x">
+          <geometry><box><size>14.9 0.03 0.001</size></box></geometry>
+          <material><ambient>0.45 0.47 0.50 0.5</ambient><diffuse>0.45 0.47 0.50 0.5</diffuse></material>
+        </visual>
+        <visual name="axis_y">
+          <geometry><box><size>0.03 14.9 0.001</size></box></geometry>
+          <material><ambient>0.45 0.47 0.50 0.5</ambient><diffuse>0.45 0.47 0.50 0.5</diffuse></material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- ==================== CEILING NET (2.22m HEIGHT - FLUSH WITH WALLS TO PREVENT ESCAPE) ==================== -->
+    <model name="arena_ceiling_net">
+      <static>true</static>
+      <pose>0 0 2.22 0 0 0</pose>
+      <link name="link">
+        <collision name="net_collision">
+          <geometry><box><size>15.2 15.2 0.08</size></box></geometry>
+          <surface>
+            <contact><ode><max_vel>0</max_vel><min_depth>0.01</min_depth></ode></contact>
+            <bounce><restitution_coefficient>0.05</restitution_coefficient></bounce>
+          </surface>
+        </collision>
+        <visual name="net_visual">
+          <geometry><box><size>15.2 15.2 0.02</size></box></geometry>
+          <material>
+            <!-- Semi-transparent containment mesh look -->
+            <ambient>0.2 0.2 0.22 0.3</ambient>
+            <diffuse>0.3 0.3 0.32 0.3</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- ==================== DESIGNATED LAUNCH & EXIT PADS ==================== -->
+    <!-- Fixed 2ft x 2ft (0.61m x 0.61m) Launch Pad inside ENTRY Room -->
+    <model name="launch_area_pad">
+      <static>true</static>
+      <pose>-5.8 -6.0 0.005 0 0 0</pose>
+      <link name="link">
+        <visual name="pad_border">
+          <geometry><box><size>0.61 0.61 0.005</size></box></geometry>
+          <material><ambient>0.0 0.75 0.2 1</ambient><diffuse>0.0 0.85 0.25 1</diffuse></material>
+        </visual>
+        <visual name="pad_inner">
+          <pose>0 0 0.002 0 0 0</pose>
+          <geometry><box><size>0.48 0.48 0.005</size></box></geometry>
+          <material><ambient>0.1 0.25 0.1 1</ambient><diffuse>0.1 0.25 0.1 1</diffuse></material>
+        </visual>
+        <visual name="launch_h">
+          <pose>0 0 0.004 0 0 0</pose>
+          <geometry><cylinder><radius>0.12</radius><length>0.005</length></cylinder></geometry>
+          <material><ambient>1.0 1.0 1.0 1</ambient><diffuse>1.0 1.0 1.0 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- Designated 2ft x 2ft Exit Pad in South-East Room -->
+    <model name="exit_area_pad">
+      <static>true</static>
+      <pose>5.5 -5.5 0.005 0 0 0</pose>
+      <link name="link">
+        <visual name="pad_border">
+          <geometry><box><size>0.61 0.61 0.005</size></box></geometry>
+          <material><ambient>1.0 0.5 0.0 1</ambient><diffuse>1.0 0.6 0.0 1</diffuse></material>
+        </visual>
+        <visual name="pad_inner">
+          <pose>0 0 0.002 0 0 0</pose>
+          <geometry><box><size>0.48 0.48 0.005</size></box></geometry>
+          <material><ambient>0.3 0.15 0.0 1</ambient><diffuse>0.3 0.15 0.0 1</diffuse></material>
+        </visual>
+        <visual name="exit_indicator">
+          <pose>0 0 0.004 0 0 0</pose>
+          <geometry><cylinder><radius>0.12</radius><length>0.005</length></cylinder></geometry>
+          <material><ambient>1.0 1.0 1.0 1</ambient><diffuse>1.0 1.0 1.0 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- ==================== SIGNAGE & BANNERS (MATCHING USER PHOTO) ==================== -->
+    <!-- 1. "NIDAR AirMouse" Large Front Poster / Banner (Left of ENTRY doorway) -->
+    <model name="banner_nidar_airmouse">
+      <static>true</static>
+      <pose>-6.3 -7.56 1.1 0 0 0</pose>
+      <link name="link">
+        <!-- White poster board backing -->
+        <visual name="board">
+          <geometry><box><size>1.6 0.02 1.3</size></box></geometry>
+          <material><ambient>0.96 0.96 0.96 1</ambient><diffuse>0.98 0.98 0.98 1</diffuse></material>
+        </visual>
+        <!-- Blue Top accent strip -->
+        <visual name="top_accent">
+          <pose>0 -0.012 0.55 0 0 0</pose>
+          <geometry><box><size>1.5 0.01 0.05</size></box></geometry>
+          <material><ambient>0.1 0.3 0.7 1</ambient><diffuse>0.15 0.4 0.85 1</diffuse></material>
+        </visual>
+        <!-- Header Text Block: NIDAR -->
+        <visual name="text_nidar">
+          <pose>0 -0.012 0.36 0 0 0</pose>
+          <geometry><box><size>0.9 0.01 0.18</size></box></geometry>
+          <material><ambient>0.1 0.1 0.15 1</ambient><diffuse>0.1 0.1 0.15 1</diffuse></material>
+        </visual>
+        <!-- Subheader Text Block: AirMouse -->
+        <visual name="text_airmouse">
+          <pose>0 -0.012 0.15 0 0 0</pose>
+          <geometry><box><size>1.0 0.01 0.14</size></box></geometry>
+          <material><ambient>0.15 0.25 0.55 1</ambient><diffuse>0.2 0.35 0.7 1</diffuse></material>
+        </visual>
+        <!-- Origami / Stealth Cube Geometric Emblem -->
+        <visual name="emblem_body">
+          <pose>0 -0.012 -0.15 0 0.785 0.785</pose>
+          <geometry><box><size>0.24 0.24 0.24</size></box></geometry>
+          <material><ambient>0.1 0.3 0.65 1</ambient><diffuse>0.15 0.45 0.85 1</diffuse></material>
+        </visual>
+        <!-- Subtitle: AUTOMOUSE -->
+        <visual name="subtitle">
+          <pose>0 -0.012 -0.42 0 0 0</pose>
+          <geometry><box><size>0.7 0.01 0.08</size></box></geometry>
+          <material><ambient>0.3 0.3 0.35 1</ambient><diffuse>0.3 0.3 0.35 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- 2. "ENTRY" Sign mounted above the entrance portal -->
+    <model name="sign_entry">
+      <static>true</static>
+      <pose>-4.5 -7.56 2.05 0 0 0</pose>
+      <link name="link">
+        <visual name="sign_board">
+          <geometry><box><size>0.75 0.02 0.32</size></box></geometry>
+          <material><ambient>0.95 0.95 0.95 1</ambient><diffuse>0.98 0.98 0.98 1</diffuse></material>
+        </visual>
+        <visual name="sign_border">
+          <geometry><box><size>0.78 0.015 0.35</size></box></geometry>
+          <material><ambient>0.15 0.15 0.15 1</ambient><diffuse>0.2 0.2 0.2 1</diffuse></material>
+        </visual>
+        <!-- Bold "ENTRY" text plate -->
+        <visual name="sign_text">
+          <pose>0 -0.012 0 0 0 0</pose>
+          <geometry><box><size>0.58 0.01 0.16</size></box></geometry>
+          <material><ambient>0.1 0.1 0.1 1</ambient><diffuse>0.1 0.1 0.1 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- 3. "GPC" Station Sign mounted on the back-center wall panel -->
+    <model name="sign_gpc">
+      <static>true</static>
+      <pose>0.5 3.94 1.80 0 0 0</pose>
+      <link name="link">
+        <visual name="sign_board">
+          <geometry><box><size>0.60 0.02 0.28</size></box></geometry>
+          <material><ambient>0.95 0.95 0.95 1</ambient><diffuse>0.98 0.98 0.98 1</diffuse></material>
+        </visual>
+        <visual name="sign_border">
+          <geometry><box><size>0.63 0.015 0.31</size></box></geometry>
+          <material><ambient>0.15 0.15 0.15 1</ambient><diffuse>0.2 0.2 0.2 1</diffuse></material>
+        </visual>
+        <!-- Bold "GPC" text plate -->
+        <visual name="sign_text">
+          <pose>0 -0.012 0 0 0 0</pose>
+          <geometry><box><size>0.42 0.01 0.14</size></box></geometry>
+          <material><ambient>0.1 0.1 0.1 1</ambient><diffuse>0.1 0.1 0.1 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+
+
+    <!-- ========================================================================= -->
+    <!--                   MODULAR CONNECTED PARTITION WALLS                       -->
+    <!-- Every wall is strictly connected at corners and T-junctions.              -->
+    <!-- Styling: Cream/off-white panels with dark metal framing and top rails.    -->
+    <!-- Height: 2.2m. Panel thickness: 0.08m. Doorways: 1.2m clear opening.      -->
+    <!-- ========================================================================= -->
+
+    <!-- ==================== 1. OUTER PERIMETER ENCLOSURE ==================== -->
+    <model name="outer_perimeter_walls">
+      <static>true</static>
+      <pose>0 0 1.10 0 0 0</pose>
+      <link name="link">
+        <!-- WEST BOUNDARY (X = -7.5, Y: -7.5 to +7.5, Full Containment Height) -->
+        <collision name="c_west"><pose>-7.5 0 0.4 0 0 0</pose><geometry><box><size>0.20 15.2 3.0</size></box></geometry></collision>
+        <visual name="v_west_panel"><pose>-7.5 0 0 0 0 0</pose><geometry><box><size>0.08 15.0 2.20</size></box></geometry>
+          <material><ambient>0.90 0.90 0.88 1</ambient><diffuse>0.93 0.93 0.90 1</diffuse></material>
+        </visual>
+        <visual name="v_west_rail"><pose>-7.5 0 1.11 0 0 0</pose><geometry><box><size>0.10 15.0 0.04</size></box></geometry>
+          <material><ambient>0.12 0.12 0.13 1</ambient><diffuse>0.15 0.15 0.16 1</diffuse></material>
+        </visual>
+
+        <!-- NORTH BOUNDARY (Y = +7.5, X: -7.5 to +7.5, Full Containment Height) -->
+        <collision name="c_north"><pose>0 7.5 0.4 0 0 0</pose><geometry><box><size>15.2 0.20 3.0</size></box></geometry></collision>
+        <visual name="v_north_panel"><pose>0 7.5 0 0 0 0</pose><geometry><box><size>15.0 0.08 2.20</size></box></geometry>
+          <material><ambient>0.90 0.90 0.88 1</ambient><diffuse>0.93 0.93 0.90 1</diffuse></material>
+        </visual>
+        <visual name="v_north_rail"><pose>0 7.5 1.11 0 0 0</pose><geometry><box><size>15.0 0.10 0.04</size></box></geometry>
+          <material><ambient>0.12 0.12 0.13 1</ambient><diffuse>0.15 0.15 0.16 1</diffuse></material>
+        </visual>
+
+        <!-- EAST BOUNDARY (X = +7.5, Y: -7.5 to +7.5, Full Containment Height) -->
+        <collision name="c_east"><pose>7.5 0 0.4 0 0 0</pose><geometry><box><size>0.20 15.2 3.0</size></box></geometry></collision>
+        <visual name="v_east_panel"><pose>7.5 0 0 0 0 0</pose><geometry><box><size>0.08 15.0 2.20</size></box></geometry>
+          <material><ambient>0.90 0.90 0.88 1</ambient><diffuse>0.93 0.93 0.90 1</diffuse></material>
+        </visual>
+        <visual name="v_east_rail"><pose>7.5 0 1.11 0 0 0</pose><geometry><box><size>0.10 15.0 0.04</size></box></geometry>
+          <material><ambient>0.12 0.12 0.13 1</ambient><diffuse>0.15 0.15 0.16 1</diffuse></material>
+        </visual>
+
+        <!-- SOUTH BOUNDARY - WEST WING (Y = -7.5, X: -7.5 to -5.1, Full Containment Height) -->
+        <collision name="c_south_w"><pose>-6.3 -7.5 0.4 0 0 0</pose><geometry><box><size>2.4 0.20 3.0</size></box></geometry></collision>
+        <visual name="v_south_w_panel"><pose>-6.3 -7.5 0 0 0 0</pose><geometry><box><size>2.4 0.08 2.20</size></box></geometry>
+          <material><ambient>0.90 0.90 0.88 1</ambient><diffuse>0.93 0.93 0.90 1</diffuse></material>
+        </visual>
+        <visual name="v_south_w_rail"><pose>-6.3 -7.5 1.11 0 0 0</pose><geometry><box><size>2.4 0.10 0.04</size></box></geometry>
+          <material><ambient>0.12 0.12 0.13 1</ambient><diffuse>0.15 0.15 0.16 1</diffuse></material>
+        </visual>
+
+        <!-- SOUTH ENTRY PORTAL - SAFETY NET CONTAINMENT (Prevents drone escaping through doorway) -->
+        <collision name="c_entry_safety_net"><pose>-4.5 -7.5 0.4 0 0 0</pose><geometry><box><size>1.2 0.15 3.0</size></box></geometry></collision>
+        <visual name="v_entry_safety_net"><pose>-4.5 -7.5 0 0 0 0</pose><geometry><box><size>1.2 0.02 2.10</size></box></geometry>
+          <material><ambient>0.2 0.25 0.3 0.25</ambient><diffuse>0.2 0.25 0.3 0.25</diffuse></material>
+        </visual>
+        <visual name="v_entry_header"><pose>-4.5 -7.5 1.05 0 0 0</pose><geometry><box><size>1.2 0.08 0.30</size></box></geometry>
+          <material><ambient>0.90 0.90 0.88 1</ambient><diffuse>0.93 0.93 0.90 1</diffuse></material>
+        </visual>
+        <visual name="v_entry_header_rail"><pose>-4.5 -7.5 1.11 0 0 0</pose><geometry><box><size>1.2 0.10 0.04</size></box></geometry>
+          <material><ambient>0.12 0.12 0.13 1</ambient><diffuse>0.15 0.15 0.16 1</diffuse></material>
+        </visual>
+
+        <!-- SOUTH BOUNDARY - EAST WING (Y = -7.5, X: -3.9 to +7.5, Full Containment Height) -->
+        <collision name="c_south_e"><pose>1.8 -7.5 0.4 0 0 0</pose><geometry><box><size>11.4 0.20 3.0</size></box></geometry></collision>
+        <visual name="v_south_e_panel"><pose>1.8 -7.5 0 0 0 0</pose><geometry><box><size>11.4 0.08 2.20</size></box></geometry>
+          <material><ambient>0.90 0.90 0.88 1</ambient><diffuse>0.93 0.93 0.90 1</diffuse></material>
+        </visual>
+        <visual name="v_south_e_rail"><pose>1.8 -7.5 1.11 0 0 0</pose><geometry><box><size>11.4 0.10 0.04</size></box></geometry>
+          <material><ambient>0.12 0.12 0.13 1</ambient><diffuse>0.15 0.15 0.16 1</diffuse></material>
+        </visual>
+
+        <!-- Boundary Corner Framing Posts (Dark metal upright columns) -->
+        <visual name="post_sw"><pose>-7.5 -7.5 0 0 0 0</pose><geometry><box><size>0.10 0.10 2.24</size></box></geometry>
+          <material><ambient>0.12 0.12 0.13 1</ambient><diffuse>0.15 0.15 0.16 1</diffuse></material>
+        </visual>
+        <visual name="post_nw"><pose>-7.5 7.5 0 0 0 0</pose><geometry><box><size>0.10 0.10 2.24</size></box></geometry>
+          <material><ambient>0.12 0.12 0.13 1</ambient><diffuse>0.15 0.15 0.16 1</diffuse></material>
+        </visual>
+        <visual name="post_ne"><pose>7.5 7.5 0 0 0 0</pose><geometry><box><size>0.10 0.10 2.24</size></box></geometry>
+          <material><ambient>0.12 0.12 0.13 1</ambient><diffuse>0.15 0.15 0.16 1</diffuse></material>
+        </visual>
+        <visual name="post_se"><pose>7.5 -7.5 0 0 0 0</pose><geometry><box><size>0.10 0.10 2.24</size></box></geometry>
+          <material><ambient>0.12 0.12 0.13 1</ambient><diffuse>0.15 0.15 0.16 1</diffuse></material>
+        </visual>
+        <visual name="post_door_l"><pose>-5.1 -7.5 0 0 0 0</pose><geometry><box><size>0.09 0.09 2.24</size></box></geometry>
+          <material><ambient>0.12 0.12 0.13 1</ambient><diffuse>0.15 0.15 0.16 1</diffuse></material>
+        </visual>
+        <visual name="post_door_r"><pose>-3.9 -7.5 0 0 0 0</pose><geometry><box><size>0.09 0.09 2.24</size></box></geometry>
+          <material><ambient>0.12 0.12 0.13 1</ambient><diffuse>0.15 0.15 0.16 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- ==================== 2. ROOM 1: ENTRY & LAUNCH BAY (Front-Left) ==================== -->
+    <!-- Enclosed room 3.5m x 3.0m. Connected to West & South outer walls. -->
+    <!-- Contains Launch Pad and Seated Person 1 (matching photo). Doorway into main corridor. -->
+    <model name="room_1_entry_bay">
+      <static>true</static>
+      <pose>0 0 1.10 0 0 0</pose>
+      <link name="link">
+        <!-- EAST PARTITION WALL (along X = -4.0, from Y = -7.5 to Y = -4.5, Length: 3.0m) -->
+        <!-- Connects to South boundary at Y = -7.5 and North wall at Y = -4.5 -->
+        <collision name="c_east"><pose>-4.0 -6.0 0 0 0 0</pose><geometry><box><size>0.08 3.0 2.20</size></box></geometry></collision>
+        <visual name="v_east"><pose>-4.0 -6.0 0 0 0 0</pose><geometry><box><size>0.08 3.0 2.20</size></box></geometry>
+          <material><ambient>0.90 0.90 0.88 1</ambient><diffuse>0.93 0.93 0.90 1</diffuse></material>
+        </visual>
+        <visual name="v_east_rail"><pose>-4.0 -6.0 1.11 0 0 0</pose><geometry><box><size>0.10 3.0 0.04</size></box></geometry>
+          <material><ambient>0.12 0.12 0.13 1</ambient><diffuse>0.15 0.15 0.16 1</diffuse></material>
+        </visual>
+
+        <!-- NORTH PARTITION WALL SEGMENT (along Y = -4.5, from X = -7.5 to X = -5.2, Length: 2.3m) -->
+        <!-- Connects to West boundary at X = -7.5; leaves 1.2m doorway from -5.2 to -4.0 -->
+        <collision name="c_north"><pose>-6.35 -4.5 0 0 0 0</pose><geometry><box><size>2.3 0.08 2.20</size></box></geometry></collision>
+        <visual name="v_north"><pose>-6.35 -4.5 0 0 0 0</pose><geometry><box><size>2.3 0.08 2.20</size></box></geometry>
+          <material><ambient>0.90 0.90 0.88 1</ambient><diffuse>0.93 0.93 0.90 1</diffuse></material>
+        </visual>
+        <visual name="v_north_rail"><pose>-6.35 -4.5 1.11 0 0 0</pose><geometry><box><size>2.3 0.10 0.04</size></box></geometry>
+          <material><ambient>0.12 0.12 0.13 1</ambient><diffuse>0.15 0.15 0.16 1</diffuse></material>
+        </visual>
+
+        <!-- North Doorway Header Rail (continuously connects X = -5.2 to -4.0 at top) -->
+        <visual name="v_door_rail"><pose>-4.6 -4.5 1.11 0 0 0</pose><geometry><box><size>1.2 0.10 0.04</size></box></geometry>
+          <material><ambient>0.12 0.12 0.13 1</ambient><diffuse>0.15 0.15 0.16 1</diffuse></material>
+        </visual>
+        <visual name="v_post_junction"><pose>-4.0 -4.5 0 0 0 0</pose><geometry><box><size>0.10 0.10 2.24</size></box></geometry>
+          <material><ambient>0.12 0.12 0.13 1</ambient><diffuse>0.15 0.15 0.16 1</diffuse></material>
+        </visual>
+        <visual name="v_post_door"><pose>-5.2 -4.5 0 0 0 0</pose><geometry><box><size>0.09 0.09 2.24</size></box></geometry>
+          <material><ambient>0.12 0.12 0.13 1</ambient><diffuse>0.15 0.15 0.16 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- ==================== 3. ROOM 2: WEST-CENTRAL ROOM ==================== -->
+    <!-- Enclosed compartment between Y = -4.5 and Y = -1.5, X = -7.5 to -4.0 -->
+    <model name="room_2_west_central">
+      <static>true</static>
+      <pose>0 0 1.10 0 0 0</pose>
+      <link name="link">
+        <!-- NORTH DIVIDING WALL (along Y = -1.5, from X = -7.5 to -5.2, Length: 2.3m) -->
+        <collision name="c_north"><pose>-6.35 -1.5 0 0 0 0</pose><geometry><box><size>2.3 0.08 2.20</size></box></geometry></collision>
+        <visual name="v_north"><pose>-6.35 -1.5 0 0 0 0</pose><geometry><box><size>2.3 0.08 2.20</size></box></geometry>
+          <material><ambient>0.90 0.90 0.88 1</ambient><diffuse>0.93 0.93 0.90 1</diffuse></material>
+        </visual>
+        <visual name="v_north_rail"><pose>-6.35 -1.5 1.11 0 0 0</pose><geometry><box><size>2.3 0.10 0.04</size></box></geometry>
+          <material><ambient>0.12 0.12 0.13 1</ambient><diffuse>0.15 0.15 0.16 1</diffuse></material>
+        </visual>
+
+        <!-- Top Continuous Rail bridging doorway (-5.2 to -4.0) -->
+        <visual name="v_door_rail"><pose>-4.6 -1.5 1.11 0 0 0</pose><geometry><box><size>1.2 0.10 0.04</size></box></geometry>
+          <material><ambient>0.12 0.12 0.13 1</ambient><diffuse>0.15 0.15 0.16 1</diffuse></material>
+        </visual>
+
+        <!-- EAST CORRIDOR WALL SEGMENT (along X = -4.0, from Y = -4.5 to -3.0, Length: 1.5m) -->
+        <collision name="c_east"><pose>-4.0 -3.75 0 0 0 0</pose><geometry><box><size>0.08 1.5 2.20</size></box></geometry></collision>
+        <visual name="v_east"><pose>-4.0 -3.75 0 0 0 0</pose><geometry><box><size>0.08 1.5 2.20</size></box></geometry>
+          <material><ambient>0.90 0.90 0.88 1</ambient><diffuse>0.93 0.93 0.90 1</diffuse></material>
+        </visual>
+        <visual name="v_east_rail"><pose>-4.0 -3.0 1.11 0 0 0</pose><geometry><box><size>0.10 3.0 0.04</size></box></geometry>
+          <material><ambient>0.12 0.12 0.13 1</ambient><diffuse>0.15 0.15 0.16 1</diffuse></material>
+        </visual>
+
+        <visual name="v_post_1"><pose>-4.0 -1.5 0 0 0 0</pose><geometry><box><size>0.10 0.10 2.24</size></box></geometry>
+          <material><ambient>0.12 0.12 0.13 1</ambient><diffuse>0.15 0.15 0.16 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- ==================== 4. ROOM 3: NORTH-WEST ROOM (Back-Left) ==================== -->
+    <!-- Enclosed room between Y = 1.5 and Y = 7.5, X = -7.5 to -4.0 -->
+    <!-- Connects to West boundary and North boundary. Contains Survivor 2. -->
+    <model name="room_3_north_west">
+      <static>true</static>
+      <pose>0 0 1.10 0 0 0</pose>
+      <link name="link">
+        <!-- SOUTH WALL (along Y = 1.5, from X = -7.5 to -5.2, Length: 2.3m) -->
+        <collision name="c_south"><pose>-6.35 1.5 0 0 0 0</pose><geometry><box><size>2.3 0.08 2.20</size></box></geometry></collision>
+        <visual name="v_south"><pose>-6.35 1.5 0 0 0 0</pose><geometry><box><size>2.3 0.08 2.20</size></box></geometry>
+          <material><ambient>0.90 0.90 0.88 1</ambient><diffuse>0.93 0.93 0.90 1</diffuse></material>
+        </visual>
+        <visual name="v_south_rail"><pose>-6.35 1.5 1.11 0 0 0</pose><geometry><box><size>2.3 0.10 0.04</size></box></geometry>
+          <material><ambient>0.12 0.12 0.13 1</ambient><diffuse>0.15 0.15 0.16 1</diffuse></material>
+        </visual>
+        <!-- Top header rail bridging doorway -->
+        <visual name="v_door_rail"><pose>-4.6 1.5 1.11 0 0 0</pose><geometry><box><size>1.2 0.10 0.04</size></box></geometry>
+          <material><ambient>0.12 0.12 0.13 1</ambient><diffuse>0.15 0.15 0.16 1</diffuse></material>
+        </visual>
+
+        <!-- EAST CONTINUOUS SPINE WALL (along X = -4.0, from Y = 1.5 to Y = 7.5, Length: 6.0m) -->
+        <!-- Strictly connects South wall at ( -4.0, 1.5 ) to North boundary at ( -4.0, 7.5 ) -->
+        <!-- Section 1: Y = 1.5 to 3.0 (Length: 1.5m) -->
+        <collision name="c_east_1"><pose>-4.0 2.25 0 0 0 0</pose><geometry><box><size>0.08 1.5 2.20</size></box></geometry></collision>
+        <visual name="v_east_1"><pose>-4.0 2.25 0 0 0 0</pose><geometry><box><size>0.08 1.5 2.20</size></box></geometry>
+          <material><ambient>0.90 0.90 0.88 1</ambient><diffuse>0.93 0.93 0.90 1</diffuse></material>
+        </visual>
+        <!-- Section 2: Y = 4.2 to 7.5 (Length: 3.3m). Doorway gap from 3.0 to 4.2 -->
+        <collision name="c_east_2"><pose>-4.0 5.85 0 0 0 0</pose><geometry><box><size>0.08 3.3 2.20</size></box></geometry></collision>
+        <visual name="v_east_2"><pose>-4.0 5.85 0 0 0 0</pose><geometry><box><size>0.08 3.3 2.20</size></box></geometry>
+          <material><ambient>0.90 0.90 0.88 1</ambient><diffuse>0.93 0.93 0.90 1</diffuse></material>
+        </visual>
+        <!-- Continuous Top Metal Rail connecting full 6.0m length -->
+        <visual name="v_east_rail"><pose>-4.0 4.5 1.11 0 0 0</pose><geometry><box><size>0.10 6.0 0.04</size></box></geometry>
+          <material><ambient>0.12 0.12 0.13 1</ambient><diffuse>0.15 0.15 0.16 1</diffuse></material>
+        </visual>
+
+        <visual name="v_post_j1"><pose>-4.0 1.5 0 0 0 0</pose><geometry><box><size>0.10 0.10 2.24</size></box></geometry>
+          <material><ambient>0.12 0.12 0.13 1</ambient><diffuse>0.15 0.15 0.16 1</diffuse></material>
+        </visual>
+        <visual name="v_post_j2"><pose>-4.0 7.5 0 0 0 0</pose><geometry><box><size>0.10 0.10 2.24</size></box></geometry>
+          <material><ambient>0.12 0.12 0.13 1</ambient><diffuse>0.15 0.15 0.16 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- ==================== 5. ROOM 4: "GPC" COMMAND ROOM (Center-Rear) ==================== -->
+    <!-- Matches the "GPC" partition room in the photograph. -->
+    <!-- Enclosed between X = -1.5 and 2.5, Y = 4.0 to 7.5. Contains Survivor 3. -->
+    <model name="room_4_gpc_room">
+      <static>true</static>
+      <pose>0 0 1.10 0 0 0</pose>
+      <link name="link">
+        <!-- WEST WALL (along X = -1.5, from Y = 4.0 to Y = 7.5, Length: 3.5m) -->
+        <!-- Connects to North boundary at Y = 7.5 and South wall at Y = 4.0 -->
+        <collision name="c_west"><pose>-1.5 5.75 0 0 0 0</pose><geometry><box><size>0.08 3.5 2.20</size></box></geometry></collision>
+        <visual name="v_west"><pose>-1.5 5.75 0 0 0 0</pose><geometry><box><size>0.08 3.5 2.20</size></box></geometry>
+          <material><ambient>0.90 0.90 0.88 1</ambient><diffuse>0.93 0.93 0.90 1</diffuse></material>
+        </visual>
+        <visual name="v_west_rail"><pose>-1.5 5.75 1.11 0 0 0</pose><geometry><box><size>0.10 3.5 0.04</size></box></geometry>
+          <material><ambient>0.12 0.12 0.13 1</ambient><diffuse>0.15 0.15 0.16 1</diffuse></material>
+        </visual>
+
+        <!-- EAST WALL (along X = 2.5, from Y = 4.0 to Y = 7.5, Length: 3.5m) -->
+        <!-- Connects to North boundary at Y = 7.5 and South wall at Y = 4.0 -->
+        <collision name="c_east"><pose>2.5 5.75 0 0 0 0</pose><geometry><box><size>0.08 3.5 2.20</size></box></geometry></collision>
+        <visual name="v_east"><pose>2.5 5.75 0 0 0 0</pose><geometry><box><size>0.08 3.5 2.20</size></box></geometry>
+          <material><ambient>0.90 0.90 0.88 1</ambient><diffuse>0.93 0.93 0.90 1</diffuse></material>
+        </visual>
+        <visual name="v_east_rail"><pose>2.5 5.75 1.11 0 0 0</pose><geometry><box><size>0.10 3.5 0.04</size></box></geometry>
+          <material><ambient>0.12 0.12 0.13 1</ambient><diffuse>0.15 0.15 0.16 1</diffuse></material>
+        </visual>
+
+        <!-- SOUTH WALL FACING CORRIDOR (along Y = 4.0, from X = -1.5 to 2.5, Length: 4.0m) -->
+        <!-- Solid segment 1 (Left): X = -1.5 to -0.2 (Length: 1.3m) -->
+        <collision name="c_south_1"><pose>-0.85 4.0 0 0 0 0</pose><geometry><box><size>1.3 0.08 2.20</size></box></geometry></collision>
+        <visual name="v_south_1"><pose>-0.85 4.0 0 0 0 0</pose><geometry><box><size>1.3 0.08 2.20</size></box></geometry>
+          <material><ambient>0.90 0.90 0.88 1</ambient><diffuse>0.93 0.93 0.90 1</diffuse></material>
+        </visual>
+        <!-- Solid segment 2 (Right, where GPC sign is mounted): X = 1.0 to 2.5 (Length: 1.5m) -->
+        <collision name="c_south_2"><pose>1.75 4.0 0 0 0 0</pose><geometry><box><size>1.5 0.08 2.20</size></box></geometry></collision>
+        <visual name="v_south_2"><pose>1.75 4.0 0 0 0 0</pose><geometry><box><size>1.5 0.08 2.20</size></box></geometry>
+          <material><ambient>0.90 0.90 0.88 1</ambient><diffuse>0.93 0.93 0.90 1</diffuse></material>
+        </visual>
+        <!-- Top Continuous Connecting Rail across entire South wall (4.0m) -->
+        <visual name="v_south_rail"><pose>0.5 4.0 1.11 0 0 0</pose><geometry><box><size>4.0 0.10 0.04</size></box></geometry>
+          <material><ambient>0.12 0.12 0.13 1</ambient><diffuse>0.15 0.15 0.16 1</diffuse></material>
+        </visual>
+
+        <!-- Corner Posts -->
+        <visual name="v_post_sw"><pose>-1.5 4.0 0 0 0 0</pose><geometry><box><size>0.10 0.10 2.24</size></box></geometry>
+          <material><ambient>0.12 0.12 0.13 1</ambient><diffuse>0.15 0.15 0.16 1</diffuse></material>
+        </visual>
+        <visual name="v_post_se"><pose>2.5 4.0 0 0 0 0</pose><geometry><box><size>0.10 0.10 2.24</size></box></geometry>
+          <material><ambient>0.12 0.12 0.13 1</ambient><diffuse>0.15 0.15 0.16 1</diffuse></material>
+        </visual>
+        <visual name="v_post_nw"><pose>-1.5 7.5 0 0 0 0</pose><geometry><box><size>0.10 0.10 2.24</size></box></geometry>
+          <material><ambient>0.12 0.12 0.13 1</ambient><diffuse>0.15 0.15 0.16 1</diffuse></material>
+        </visual>
+        <visual name="v_post_ne"><pose>2.5 7.5 0 0 0 0</pose><geometry><box><size>0.10 0.10 2.24</size></box></geometry>
+          <material><ambient>0.12 0.12 0.13 1</ambient><diffuse>0.15 0.15 0.16 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- ==================== 6. CENTRAL CORRIDORS & LABYRINTH DIVIDERS ==================== -->
+    <!-- Matches the drone hover corridor and the green SLAM trajectory loop from the monitor. -->
+    <!-- Partitions connect into a continuous maze with uniform >= 1.2m clear passage. -->
+    <model name="central_corridor_dividers">
+      <static>true</static>
+      <pose>0 0 1.10 0 0 0</pose>
+      <link name="link">
+        <!-- CENTRAL SPINE DIVIDER (along X = 0.5, from Y = -2.5 to Y = 2.0, Length: 4.5m) -->
+        <collision name="c_spine"><pose>0.5 -0.25 0 0 0 0</pose><geometry><box><size>0.08 4.5 2.20</size></box></geometry></collision>
+        <visual name="v_spine"><pose>0.5 -0.25 0 0 0 0</pose><geometry><box><size>0.08 4.5 2.20</size></box></geometry>
+          <material><ambient>0.90 0.90 0.88 1</ambient><diffuse>0.93 0.93 0.90 1</diffuse></material>
+        </visual>
+        <visual name="v_spine_rail"><pose>0.5 -0.25 1.11 0 0 0</pose><geometry><box><size>0.10 4.5 0.04</size></box></geometry>
+          <material><ambient>0.12 0.12 0.13 1</ambient><diffuse>0.15 0.15 0.16 1</diffuse></material>
+        </visual>
+
+        <!-- NORTH BAFFLE (along Y = 2.0, from X = -1.5 to 0.5, Length: 2.0m) -->
+        <!-- Seamlessly connects to Central Spine at ( 0.5, 2.0 ) -->
+        <collision name="c_nbaffle"><pose>-0.5 2.0 0 0 0 0</pose><geometry><box><size>2.0 0.08 2.20</size></box></geometry></collision>
+        <visual name="v_nbaffle"><pose>-0.5 2.0 0 0 0 0</pose><geometry><box><size>2.0 0.08 2.20</size></box></geometry>
+          <material><ambient>0.90 0.90 0.88 1</ambient><diffuse>0.93 0.93 0.90 1</diffuse></material>
+        </visual>
+        <visual name="v_nbaffle_rail"><pose>-0.5 2.0 1.11 0 0 0</pose><geometry><box><size>2.0 0.10 0.04</size></box></geometry>
+          <material><ambient>0.12 0.12 0.13 1</ambient><diffuse>0.15 0.15 0.16 1</diffuse></material>
+        </visual>
+
+        <!-- SOUTH BAFFLE (along Y = -2.5, from X = 0.5 to 3.5, Length: 3.0m) -->
+        <!-- Seamlessly connects Central Spine at ( 0.5, -2.5 ) to East wall at ( 3.5, -2.5 ) -->
+        <collision name="c_sbaffle"><pose>2.0 -2.5 0 0 0 0</pose><geometry><box><size>3.0 0.08 2.20</size></box></geometry></collision>
+        <visual name="v_sbaffle"><pose>2.0 -2.5 0 0 0 0</pose><geometry><box><size>3.0 0.08 2.20</size></box></geometry>
+          <material><ambient>0.90 0.90 0.88 1</ambient><diffuse>0.93 0.93 0.90 1</diffuse></material>
+        </visual>
+        <visual name="v_sbaffle_rail"><pose>2.0 -2.5 1.11 0 0 0</pose><geometry><box><size>3.0 0.10 0.04</size></box></geometry>
+          <material><ambient>0.12 0.12 0.13 1</ambient><diffuse>0.15 0.15 0.16 1</diffuse></material>
+        </visual>
+
+        <visual name="v_post_j1"><pose>0.5 2.0 0 0 0 0</pose><geometry><box><size>0.10 0.10 2.24</size></box></geometry>
+          <material><ambient>0.12 0.12 0.13 1</ambient><diffuse>0.15 0.15 0.16 1</diffuse></material>
+        </visual>
+        <visual name="v_post_j2"><pose>0.5 -2.5 0 0 0 0</pose><geometry><box><size>0.10 0.10 2.24</size></box></geometry>
+          <material><ambient>0.12 0.12 0.13 1</ambient><diffuse>0.15 0.15 0.16 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- ==================== 7. ROOM 5: NORTH-EAST ROOM (Back-Right) ==================== -->
+    <!-- Enclosed between X = 4.0 to 7.5, Y = 3.5 to 7.5. Contains Survivor 4. -->
+    <model name="room_5_north_east">
+      <static>true</static>
+      <pose>0 0 1.10 0 0 0</pose>
+      <link name="link">
+        <!-- WEST WALL (along X = 4.0, from Y = 3.5 to Y = 7.5, Length: 4.0m) -->
+        <!-- Connects to North boundary at Y = 7.5 and South wall at Y = 3.5 -->
+        <collision name="c_west"><pose>4.0 5.5 0 0 0 0</pose><geometry><box><size>0.08 4.0 2.20</size></box></geometry></collision>
+        <visual name="v_west"><pose>4.0 5.5 0 0 0 0</pose><geometry><box><size>0.08 4.0 2.20</size></box></geometry>
+          <material><ambient>0.90 0.90 0.88 1</ambient><diffuse>0.93 0.93 0.90 1</diffuse></material>
+        </visual>
+        <visual name="v_west_rail"><pose>4.0 5.5 1.11 0 0 0</pose><geometry><box><size>0.10 4.0 0.04</size></box></geometry>
+          <material><ambient>0.12 0.12 0.13 1</ambient><diffuse>0.15 0.15 0.16 1</diffuse></material>
+        </visual>
+
+        <!-- SOUTH WALL (along Y = 3.5, from X = 5.2 to X = 7.5, Length: 2.3m) -->
+        <!-- Leaves 1.2m doorway from X = 4.0 to 5.2; connects to East boundary at X = 7.5 -->
+        <collision name="c_south"><pose>6.35 3.5 0 0 0 0</pose><geometry><box><size>2.3 0.08 2.20</size></box></geometry></collision>
+        <visual name="v_south"><pose>6.35 3.5 0 0 0 0</pose><geometry><box><size>2.3 0.08 2.20</size></box></geometry>
+          <material><ambient>0.90 0.90 0.88 1</ambient><diffuse>0.93 0.93 0.90 1</diffuse></material>
+        </visual>
+        <visual name="v_south_rail"><pose>6.35 3.5 1.11 0 0 0</pose><geometry><box><size>2.3 0.10 0.04</size></box></geometry>
+          <material><ambient>0.12 0.12 0.13 1</ambient><diffuse>0.15 0.15 0.16 1</diffuse></material>
+        </visual>
+        <visual name="v_door_rail"><pose>4.6 3.5 1.11 0 0 0</pose><geometry><box><size>1.2 0.10 0.04</size></box></geometry>
+          <material><ambient>0.12 0.12 0.13 1</ambient><diffuse>0.15 0.15 0.16 1</diffuse></material>
+        </visual>
+
+        <visual name="v_post_j1"><pose>4.0 3.5 0 0 0 0</pose><geometry><box><size>0.10 0.10 2.24</size></box></geometry>
+          <material><ambient>0.12 0.12 0.13 1</ambient><diffuse>0.15 0.15 0.16 1</diffuse></material>
+        </visual>
+        <visual name="v_post_j2"><pose>4.0 7.5 0 0 0 0</pose><geometry><box><size>0.10 0.10 2.24</size></box></geometry>
+          <material><ambient>0.12 0.12 0.13 1</ambient><diffuse>0.15 0.15 0.16 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- ==================== 8. ROOM 6: EAST-CENTRAL ROOM (Middle-Right) ==================== -->
+    <!-- Matches where the person is sitting in the user photograph on the right! -->
+    <!-- Enclosed between X = 3.5 to 7.5, Y = -1.5 to 3.5. Contains Survivor 5. -->
+    <model name="room_6_east_central">
+      <static>true</static>
+      <pose>0 0 1.10 0 0 0</pose>
+      <link name="link">
+        <!-- SOUTH WALL (along Y = -1.5, from X = 3.5 to X = 7.5, Length: 4.0m) -->
+        <!-- Connects to East corridor wall at X = 3.5 and East boundary at X = 7.5 -->
+        <collision name="c_south"><pose>5.5 -1.5 0 0 0 0</pose><geometry><box><size>4.0 0.08 2.20</size></box></geometry></collision>
+        <visual name="v_south"><pose>5.5 -1.5 0 0 0 0</pose><geometry><box><size>4.0 0.08 2.20</size></box></geometry>
+          <material><ambient>0.90 0.90 0.88 1</ambient><diffuse>0.93 0.93 0.90 1</diffuse></material>
+        </visual>
+        <visual name="v_south_rail"><pose>5.5 -1.5 1.11 0 0 0</pose><geometry><box><size>4.0 0.10 0.04</size></box></geometry>
+          <material><ambient>0.12 0.12 0.13 1</ambient><diffuse>0.15 0.15 0.16 1</diffuse></material>
+        </visual>
+
+        <!-- WEST WALL (along X = 3.5, from Y = -1.5 to Y = 3.5, Length: 5.0m) -->
+        <!-- Solid section 1: Y = -1.5 to 0.5 (Length: 2.0m) -->
+        <collision name="c_west_1"><pose>3.5 -0.5 0 0 0 0</pose><geometry><box><size>0.08 2.0 2.20</size></box></geometry></collision>
+        <visual name="v_west_1"><pose>3.5 -0.5 0 0 0 0</pose><geometry><box><size>0.08 2.0 2.20</size></box></geometry>
+          <material><ambient>0.90 0.90 0.88 1</ambient><diffuse>0.93 0.93 0.90 1</diffuse></material>
+        </visual>
+        <!-- Solid section 2: Y = 1.7 to 3.5 (Length: 1.8m). Doorway gap from 0.5 to 1.7 -->
+        <collision name="c_west_2"><pose>3.5 2.6 0 0 0 0</pose><geometry><box><size>0.08 1.8 2.20</size></box></geometry></collision>
+        <visual name="v_west_2"><pose>3.5 2.6 0 0 0 0</pose><geometry><box><size>0.08 1.8 2.20</size></box></geometry>
+          <material><ambient>0.90 0.90 0.88 1</ambient><diffuse>0.93 0.93 0.90 1</diffuse></material>
+        </visual>
+        <!-- Continuous Top Metal Rail (5.0m) -->
+        <visual name="v_west_rail"><pose>3.5 1.0 1.11 0 0 0</pose><geometry><box><size>0.10 5.0 0.04</size></box></geometry>
+          <material><ambient>0.12 0.12 0.13 1</ambient><diffuse>0.15 0.15 0.16 1</diffuse></material>
+        </visual>
+
+        <visual name="v_post_j1"><pose>3.5 -1.5 0 0 0 0</pose><geometry><box><size>0.10 0.10 2.24</size></box></geometry>
+          <material><ambient>0.12 0.12 0.13 1</ambient><diffuse>0.15 0.15 0.16 1</diffuse></material>
+        </visual>
+        <visual name="v_post_j2"><pose>3.5 3.5 0 0 0 0</pose><geometry><box><size>0.10 0.10 2.24</size></box></geometry>
+          <material><ambient>0.12 0.12 0.13 1</ambient><diffuse>0.15 0.15 0.16 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- ==================== 9. ROOM 7: SOUTH-EAST ROOM (Front-Right) ==================== -->
+    <!-- Enclosed between X = 3.5 to 7.5, Y = -7.5 to -1.5. Contains Exit Pad & Survivor 6. -->
+    <model name="room_7_south_east">
+      <static>true</static>
+      <pose>0 0 1.10 0 0 0</pose>
+      <link name="link">
+        <!-- WEST WALL (along X = 3.5, from Y = -7.5 to Y = -1.5, Length: 6.0m) -->
+        <!-- Section 1: Y = -7.5 to -4.0 (Length: 3.5m) -->
+        <collision name="c_west_1"><pose>3.5 -5.75 0 0 0 0</pose><geometry><box><size>0.08 3.5 2.20</size></box></geometry></collision>
+        <visual name="v_west_1"><pose>3.5 -5.75 0 0 0 0</pose><geometry><box><size>0.08 3.5 2.20</size></box></geometry>
+          <material><ambient>0.90 0.90 0.88 1</ambient><diffuse>0.93 0.93 0.90 1</diffuse></material>
+        </visual>
+        <!-- Section 2: Y = -2.8 to -1.5 (Length: 1.3m). Doorway gap from -4.0 to -2.8 -->
+        <collision name="c_west_2"><pose>3.5 -2.15 0 0 0 0</pose><geometry><box><size>0.08 1.3 2.20</size></box></geometry></collision>
+        <visual name="v_west_2"><pose>3.5 -2.15 0 0 0 0</pose><geometry><box><size>0.08 1.3 2.20</size></box></geometry>
+          <material><ambient>0.90 0.90 0.88 1</ambient><diffuse>0.93 0.93 0.90 1</diffuse></material>
+        </visual>
+        <!-- Continuous Top Metal Rail (6.0m) -->
+        <visual name="v_west_rail"><pose>3.5 -4.5 1.11 0 0 0</pose><geometry><box><size>0.10 6.0 0.04</size></box></geometry>
+          <material><ambient>0.12 0.12 0.13 1</ambient><diffuse>0.15 0.15 0.16 1</diffuse></material>
+        </visual>
+
+        <visual name="v_post_j1"><pose>3.5 -7.5 0 0 0 0</pose><geometry><box><size>0.10 0.10 2.24</size></box></geometry>
+          <material><ambient>0.12 0.12 0.13 1</ambient><diffuse>0.15 0.15 0.16 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+
+
+    <!-- ==================== 6 SURVIVOR / HUMAN FIGURES ==================== -->
+    <!-- Modeled with realistic seated postures, clothing, and high-visibility identifiers -->
+
+    <!-- Survivor 1: Person sitting inside the ENTRY room (Front-Left, exactly matching photo) -->
+    <model name="survivor_1_entry_bay">
+      <static>true</static>
+      <pose>-6.8 -5.5 0.35 0 0 0.4</pose>
+      <link name="link">
+        <collision name="col"><geometry><cylinder><radius>0.24</radius><length>0.70</length></cylinder></geometry></collision>
+        <!-- Head with dark hair -->
+        <visual name="head"><pose>0 0 0.28 0 0 0</pose><geometry><sphere><radius>0.13</radius></sphere></geometry><material><ambient>0.8 0.6 0.5 1</ambient><diffuse>0.85 0.65 0.55 1</diffuse></material></visual>
+        <visual name="hair"><pose>0 0 0.34 0 0 0</pose><geometry><sphere><radius>0.135</radius></sphere></geometry><material><ambient>0.1 0.1 0.1 1</ambient><diffuse>0.1 0.1 0.1 1</diffuse></material></visual>
+        <!-- Dark shirt/jacket (as seen in photo) -->
+        <visual name="torso"><pose>0 0 0.02 0 0 0</pose><geometry><cylinder><radius>0.18</radius><length>0.40</length></cylinder></geometry><material><ambient>0.15 0.18 0.22 1</ambient><diffuse>0.18 0.22 0.28 1</diffuse></material></visual>
+        <!-- Dark pants folded in sitting position -->
+        <visual name="legs"><pose>0.15 0 -0.22 0 1.57 0</pose><geometry><cylinder><radius>0.12</radius><length>0.45</length></cylinder></geometry><material><ambient>0.1 0.12 0.15 1</ambient><diffuse>0.12 0.14 0.18 1</diffuse></material></visual>
+        <!-- Rescue Tag / Identifier -->
+        <visual name="badge"><pose>0.19 0 0.08 0 0 0</pose><geometry><box><size>0.01 0.12 0.06</size></box></geometry><material><ambient>1 0.8 0 1</ambient><diffuse>1 0.85 0 1</diffuse></material></visual>
+      </link>
+    </model>
+
+    <!-- Survivor 2: Inside North-West Room -->
+    <model name="survivor_2_north_west">
+      <static>true</static>
+      <pose>-5.8 5.5 0.35 0 0 -1.2</pose>
+      <link name="link">
+        <collision name="col"><geometry><cylinder><radius>0.24</radius><length>0.70</length></cylinder></geometry></collision>
+        <visual name="head"><pose>0 0 0.28 0 0 0</pose><geometry><sphere><radius>0.13</radius></sphere></geometry><material><ambient>0.8 0.6 0.5 1</ambient><diffuse>0.85 0.65 0.55 1</diffuse></material></visual>
+        <visual name="torso"><pose>0 0 0.02 0 0 0</pose><geometry><cylinder><radius>0.18</radius><length>0.40</length></cylinder></geometry><material><ambient>0.8 0.2 0.1 1</ambient><diffuse>0.9 0.25 0.1 1</diffuse></material></visual>
+        <visual name="legs"><pose>0.15 0 -0.22 0 1.57 0</pose><geometry><cylinder><radius>0.12</radius><length>0.45</length></cylinder></geometry><material><ambient>0.1 0.12 0.15 1</ambient><diffuse>0.12 0.14 0.18 1</diffuse></material></visual>
+        <visual name="badge"><pose>0.19 0 0.08 0 0 0</pose><geometry><box><size>0.01 0.12 0.06</size></box></geometry><material><ambient>1 1 1 1</ambient><diffuse>1 1 1 1</diffuse></material></visual>
+      </link>
+    </model>
+
+    <!-- Survivor 3: Inside GPC Command Room -->
+    <model name="survivor_3_gpc_room">
+      <static>true</static>
+      <pose>0.8 6.0 0.35 0 0 0.8</pose>
+      <link name="link">
+        <collision name="col"><geometry><cylinder><radius>0.24</radius><length>0.70</length></cylinder></geometry></collision>
+        <visual name="head"><pose>0 0 0.28 0 0 0</pose><geometry><sphere><radius>0.13</radius></sphere></geometry><material><ambient>0.8 0.6 0.5 1</ambient><diffuse>0.85 0.65 0.55 1</diffuse></material></visual>
+        <visual name="torso"><pose>0 0 0.02 0 0 0</pose><geometry><cylinder><radius>0.18</radius><length>0.40</length></cylinder></geometry><material><ambient>0.1 0.45 0.7 1</ambient><diffuse>0.15 0.55 0.85 1</diffuse></material></visual>
+        <visual name="legs"><pose>0.15 0 -0.22 0 1.57 0</pose><geometry><cylinder><radius>0.12</radius><length>0.45</length></cylinder></geometry><material><ambient>0.1 0.12 0.15 1</ambient><diffuse>0.12 0.14 0.18 1</diffuse></material></visual>
+        <visual name="badge"><pose>0.19 0 0.08 0 0 0</pose><geometry><box><size>0.01 0.12 0.06</size></box></geometry><material><ambient>1 1 1 1</ambient><diffuse>1 1 1 1</diffuse></material></visual>
+      </link>
+    </model>
+
+    <!-- Survivor 4: Inside North-East Room -->
+    <model name="survivor_4_north_east">
+      <static>true</static>
+      <pose>6.0 5.5 0.35 0 0 -2.4</pose>
+      <link name="link">
+        <collision name="col"><geometry><cylinder><radius>0.24</radius><length>0.70</length></cylinder></geometry></collision>
+        <visual name="head"><pose>0 0 0.28 0 0 0</pose><geometry><sphere><radius>0.13</radius></sphere></geometry><material><ambient>0.8 0.6 0.5 1</ambient><diffuse>0.85 0.65 0.55 1</diffuse></material></visual>
+        <visual name="torso"><pose>0 0 0.02 0 0 0</pose><geometry><cylinder><radius>0.18</radius><length>0.40</length></cylinder></geometry><material><ambient>0.9 0.45 0.0 1</ambient><diffuse>1.0 0.55 0.0 1</diffuse></material></visual>
+        <visual name="legs"><pose>0.15 0 -0.22 0 1.57 0</pose><geometry><cylinder><radius>0.12</radius><length>0.45</length></cylinder></geometry><material><ambient>0.1 0.12 0.15 1</ambient><diffuse>0.12 0.14 0.18 1</diffuse></material></visual>
+        <visual name="badge"><pose>0.19 0 0.08 0 0 0</pose><geometry><box><size>0.01 0.12 0.06</size></box></geometry><material><ambient>1 1 1 1</ambient><diffuse>1 1 1 1</diffuse></material></visual>
+      </link>
+    </model>
+
+    <!-- Survivor 5: Person sitting on the far right against the wall (Middle-Right, exactly matching photo) -->
+    <model name="survivor_5_east_central">
+      <static>true</static>
+      <pose>6.8 1.0 0.35 0 0 3.14</pose>
+      <link name="link">
+        <collision name="col"><geometry><cylinder><radius>0.24</radius><length>0.70</length></cylinder></geometry></collision>
+        <!-- Head with dark hair -->
+        <visual name="head"><pose>0 0 0.28 0 0 0</pose><geometry><sphere><radius>0.13</radius></sphere></geometry><material><ambient>0.8 0.6 0.5 1</ambient><diffuse>0.85 0.65 0.55 1</diffuse></material></visual>
+        <visual name="hair"><pose>0 0 0.34 0 0 0</pose><geometry><sphere><radius>0.135</radius></sphere></geometry><material><ambient>0.1 0.1 0.1 1</ambient><diffuse>0.1 0.1 0.1 1</diffuse></material></visual>
+        <!-- Navy blue shirt (as seen in photo) -->
+        <visual name="torso"><pose>0 0 0.02 0 0 0</pose><geometry><cylinder><radius>0.18</radius><length>0.40</length></cylinder></geometry><material><ambient>0.12 0.20 0.35 1</ambient><diffuse>0.15 0.25 0.45 1</diffuse></material></visual>
+        <!-- Dark pants -->
+        <visual name="legs"><pose>0.15 0 -0.22 0 1.57 0</pose><geometry><cylinder><radius>0.12</radius><length>0.45</length></cylinder></geometry><material><ambient>0.1 0.12 0.15 1</ambient><diffuse>0.12 0.14 0.18 1</diffuse></material></visual>
+        <visual name="badge"><pose>0.19 0 0.08 0 0 0</pose><geometry><box><size>0.01 0.12 0.06</size></box></geometry><material><ambient>1 0.8 0 1</ambient><diffuse>1 0.85 0 1</diffuse></material></visual>
+      </link>
+    </model>
+
+    <!-- Survivor 6: Inside South-East Room -->
+    <model name="survivor_6_south_east">
+      <static>true</static>
+      <pose>6.2 -4.0 0.35 0 0 -0.5</pose>
+      <link name="link">
+        <collision name="col"><geometry><cylinder><radius>0.24</radius><length>0.70</length></cylinder></geometry></collision>
+        <visual name="head"><pose>0 0 0.28 0 0 0</pose><geometry><sphere><radius>0.13</radius></sphere></geometry><material><ambient>0.8 0.6 0.5 1</ambient><diffuse>0.85 0.65 0.55 1</diffuse></material></visual>
+        <visual name="torso"><pose>0 0 0.02 0 0 0</pose><geometry><cylinder><radius>0.18</radius><length>0.40</length></cylinder></geometry><material><ambient>0.15 0.55 0.25 1</ambient><diffuse>0.2 0.65 0.3 1</diffuse></material></visual>
+        <visual name="legs"><pose>0.15 0 -0.22 0 1.57 0</pose><geometry><cylinder><radius>0.12</radius><length>0.45</length></cylinder></geometry><material><ambient>0.1 0.12 0.15 1</ambient><diffuse>0.12 0.14 0.18 1</diffuse></material></visual>
+        <visual name="badge"><pose>0.19 0 0.08 0 0 0</pose><geometry><box><size>0.01 0.12 0.06</size></box></geometry><material><ambient>1 1 1 1</ambient><diffuse>1 1 1 1</diffuse></material></visual>
+      </link>
+    </model>
+
+    <!-- ==================== DISASTER OBSTACLES ==================== -->
+    <model name="obstacle_box_1">
+      <static>true</static>
+      <pose>-2.2 0.0 0.20 0 0 0.3</pose>
+      <link name="link">
+        <collision name="c"><geometry><box><size>0.5 0.5 0.4</size></box></geometry></collision>
+        <visual name="v"><geometry><box><size>0.5 0.5 0.4</size></box></geometry>
+          <material><ambient>0.45 0.42 0.38 1</ambient><diffuse>0.55 0.50 0.45 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+
+    <model name="obstacle_box_2">
+      <static>true</static>
+      <pose>2.5 -0.5 0.20 0 0 -0.4</pose>
+      <link name="link">
+        <collision name="c"><geometry><box><size>0.6 0.4 0.4</size></box></geometry></collision>
+        <visual name="v"><geometry><box><size>0.6 0.4 0.4</size></box></geometry>
+          <material><ambient>0.45 0.42 0.38 1</ambient><diffuse>0.55 0.50 0.45 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- ==================== INBUILT GAZEBO MULTICOPTER (PX5 DRONE) ==================== -->
+    <!-- Spawned on Launch Pad in ENTRY Bay (-5.8, -6.0) with Inbuilt Motor Models & Velocity Controller -->
+    <include>
+      <uri>model://px5_drone</uri>
+      <name>px5_drone</name>
+      <pose>-5.8 -6.0 0.05 0 0 0</pose>
+    </include>
+
+  </world>
+</sdf>
