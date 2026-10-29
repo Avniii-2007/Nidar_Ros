@@ -95,10 +95,16 @@ echo "   LiDAR 1 : Horizontal 360° 2D LiDAR (/scan) -> slam_toolbox 2D Mapping"
 echo "   LiDAR 2 : Downward ToF LiDAR (/drone/tf02_pro/scan) -> Sub-cm Altitude"
 echo " Vision    : Camera Survivor Localisation & Grid Box Tagging (/survivor_markers)"
 echo " Mode      : Headless Sim (NVIDIA EGL Hardware Accelerated: ${HEADLESS})"
-echo " GCS Server: http://localhost:8080"
+GCS_PORT="8080"
+if ss -tuln | grep -q ":8080 "; then
+    GCS_PORT="8081"
+    echo " Note      : Port 8080 is currently occupied. GCS will bind to fallback port ${GCS_PORT}."
+fi
+
+echo " GCS Server: http://localhost:${GCS_PORT}"
 if [ -n "$HOST_IP" ]; then
-    echo " Mac URL   : http://${HOST_IP}:8080 (Direct access from Mac on same network)"
-    echo " SSH Tunnel: ssh -L 8080:localhost:8080 shubham@${HOST_IP}"
+    echo " Network   : http://${HOST_IP}:${GCS_PORT} (Direct browser access on same network)"
+    echo " SSH Tunnel: ssh -L ${GCS_PORT}:localhost:${GCS_PORT} shubham@${HOST_IP}"
 fi
 echo " Failsafes : 8ft (2.44m) Ceiling Net Limit & Emergency Wall Proximity Buffer"
 echo "=========================================================================="

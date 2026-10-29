@@ -720,18 +720,36 @@ class ReusableThreadingHTTPServer(ThreadingHTTPServer):
     daemon_threads = True
 
 
-def start_http_server():
-    server_address = ('0.0.0.0', 8080)
-    for attempt in range(5):
+def start_http_server(preferred_port=8080):
+    ports_to_try = [preferred_port, 8081, 8082, 8083, 8085, 5000]
+    # Remove duplicates while preserving order
+    candidate_ports = []
+    for p in ports_to_try:
+        if p not in candidate_ports:
+            candidate_ports.append(p)
+
+    httpd = None
+    active_port = None
+    for port in candidate_ports:
         try:
+            server_address = ('0.0.0.0', port)
             httpd = ReusableThreadingHTTPServer(server_address, GCSRequestHandler)
-            httpd.serve_forever()
+            active_port = port
+            GCS_STATE["server_port"] = active_port
+            print("=" * 60, flush=True)
+            print(f"[GCS Server] ONLINE on port {active_port}!", flush=True)
+            print(f"  -> Local URL : http://localhost:{active_port}", flush=True)
+            print(f"  -> Network   : http://0.0.0.0:{active_port}", flush=True)
+            print("=" * 60, flush=True)
             break
         except OSError as e:
-            if attempt < 4:
-                time.sleep(1.0)
-            else:
-                print(f"[GCS Server] Port 8080 unavailable ({e}). Continuing with ROS node.")
+            print(f"[GCS Server] Port {port} unavailable ({e}), trying fallback...", flush=True)
+            continue
+
+    if httpd:
+        httpd.serve_forever()
+    else:
+        print("[GCS Server] ERROR: Could not bind to any available port!", flush=True)
 
 
 def main(args=None):
