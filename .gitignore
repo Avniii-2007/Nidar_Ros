@@ -2,6 +2,7 @@
 build/
 install/
 log/
+*.log
 
 # IDE & Editor files
 .vscode/

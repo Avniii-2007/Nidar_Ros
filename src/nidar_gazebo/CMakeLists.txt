@@ -12,4 +12,12 @@ install(
   DESTINATION share/${PROJECT_NAME}
 )
 
+install(
+  PROGRAMS
+    scripts/drone_autonomy_controller.py
+    scripts/survivor_detector.py
+    scripts/mission_planner_gcs.py
+  DESTINATION lib/${PROJECT_NAME}
+)
+
 ament_package()

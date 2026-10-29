@@ -1,30 +1,57 @@
-# ROS-Gazebo Transport Bridge Configuration for NIDAR AirMouse Simulation
+# ROS-Gazebo Transport Bridge Configuration for NIDAR Autonomous Drone
+# 2D LiDAR (360-degree SLAM & Obstacle Avoidance)
 - ros_topic_name: "/scan"
   gz_topic_name: "/scan"
   ros_type_name: "sensor_msgs/msg/LaserScan"
   gz_type_name: "gz.msgs.LaserScan"
   direction: GZ_TO_ROS
 
+# Forward-Facing RGB Camera (Survivor Localisation & Feed)
 - ros_topic_name: "/camera/image_raw"
   gz_topic_name: "/camera/image_raw"
   ros_type_name: "sensor_msgs/msg/Image"
   gz_type_name: "gz.msgs.Image"
   direction: GZ_TO_ROS
 
+# Forward-Facing Depth Camera (3D RealSense Depth Perception)
+- ros_topic_name: "/camera/depth_image"
+  gz_topic_name: "/camera/depth_image"
+  ros_type_name: "sensor_msgs/msg/Image"
+  gz_type_name: "gz.msgs.Image"
+  direction: GZ_TO_ROS
+
+# Onboard 6-DOF IMU Sensor (Linear Acceleration & Angular Velocity)
 - ros_topic_name: "/imu"
   gz_topic_name: "/imu"
   ros_type_name: "sensor_msgs/msg/Imu"
   gz_type_name: "gz.msgs.IMU"
   direction: GZ_TO_ROS
 
+# Benewake TF02-Pro LiDAR Distance Ranging Sensor (Ground Altimeter)
+- ros_topic_name: "/drone/tf02_pro/scan"
+  gz_topic_name: "/drone/tf02_pro/scan"
+  ros_type_name: "sensor_msgs/msg/LaserScan"
+  gz_type_name: "gz.msgs.LaserScan"
+  direction: GZ_TO_ROS
+
+# PX5 / X3 Drone Odometry -> ROS 2 /odom
 - ros_topic_name: "/odom"
-  gz_topic_name: "/odom"
+  gz_topic_name: "/model/X3/odometry"
   ros_type_name: "nav_msgs/msg/Odometry"
   gz_type_name: "gz.msgs.Odometry"
   direction: GZ_TO_ROS
 
+# Autonomous Velocity Control Commands: ROS 2 /cmd_vel -> Gazebo X3 Flight Controller
 - ros_topic_name: "/cmd_vel"
-  gz_topic_name: "/cmd_vel"
+  gz_topic_name: "/X3/gazebo/command/twist"
   ros_type_name: "geometry_msgs/msg/Twist"
   gz_type_name: "gz.msgs.Twist"
   direction: ROS_TO_GZ
+
+# Gazebo Simulation Clock -> ROS 2 /clock
+- ros_topic_name: "/clock"
+  gz_topic_name: "/clock"
+  ros_type_name: "rosgraph_msgs/msg/Clock"
+  gz_type_name: "gz.msgs.Clock"
+  direction: GZ_TO_ROS
+

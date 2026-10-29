@@ -10,12 +10,24 @@ def generate_launch_description():
     models_dir = os.path.join(pkg_share, 'models')
     world_path = os.path.join(pkg_share, 'worlds', 'nidar_arena.sdf')
 
-    # Ensure DISPLAY and XAUTHORITY are set for SSH sessions if opening GUI
-    current_display = os.environ.get('DISPLAY', ':0')
-    current_xauth = os.environ.get('XAUTHORITY', '/run/user/1000/gdm/Xauthority')
+    current_display = os.environ.get('DISPLAY', '')
+    if not current_display and os.path.exists('/tmp/.X11-unix/X0'):
+        current_display = ':0'
+
+    current_xauth = os.environ.get('XAUTHORITY', '')
+    if not current_xauth:
+        import glob
+        m = glob.glob('/run/user/1000/.mutter-Xwaylandauth.*')
+        current_xauth = m[0] if m else '/home/shubham/.Xauthority'
+
+    default_headless = 'true'
 
     env_display = SetEnvironmentVariable(name='DISPLAY', value=current_display)
     env_xauth = SetEnvironmentVariable(name='XAUTHORITY', value=current_xauth)
+    env_egl = SetEnvironmentVariable(
+        name='__EGL_VENDOR_LIBRARY_FILENAMES',
+        value='/usr/share/glvnd/egl_vendor.d/10_nvidia.json'
+    )
 
     # Environment variable so Gazebo locates the drone and custom models
     gz_resource_path = SetEnvironmentVariable(
@@ -25,11 +37,11 @@ def generate_launch_description():
 
     headless_arg = DeclareLaunchArgument(
         'headless',
-        default_value='false',
+        default_value=default_headless,
         description='Set to true for headless (server only), or false to display the full 3D GUI'
     )
 
-    # 1. Full 3D GUI Mode (Default)
+    # 1. Full 3D GUI Mode (Default when DISPLAY is set)
     gz_sim_gui = ExecuteProcess(
         condition=UnlessCondition(LaunchConfiguration('headless')),
         cmd=['gz', 'sim', '-r', world_path],
@@ -46,6 +58,7 @@ def generate_launch_description():
     return LaunchDescription([
         env_display,
         env_xauth,
+        env_egl,
         gz_resource_path,
         headless_arg,
         gz_sim_gui,

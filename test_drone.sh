@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # Script to send flight test commands to the inbuilt PX5 / X3 multicopter in Gazebo Sim
 
+export __EGL_VENDOR_LIBRARY_FILENAMES=/usr/share/glvnd/egl_vendor.d/10_nvidia.json
 CMD="${1:-help}"
 TOPIC="/X3/gazebo/command/twist"
 
