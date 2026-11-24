@@ -1,10 +1,15 @@
 import os
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument, ExecuteProcess, SetEnvironmentVariable
+from launch.actions import (DeclareLaunchArgument, ExecuteProcess, SetEnvironmentVariable,
+                            EmitEvent, LogInfo, RegisterEventHandler)
 from launch.conditions import IfCondition, UnlessCondition
+from launch.events import matches_action
 from launch.substitutions import LaunchConfiguration
-from launch_ros.actions import Node
+from launch_ros.actions import Node, LifecycleNode
+from launch_ros.event_handlers import OnStateTransition
+from launch_ros.events.lifecycle import ChangeState
+from lifecycle_msgs.msg import Transition
 
 
 def generate_launch_description():
@@ -47,6 +52,11 @@ def generate_launch_description():
         'auto_start',
         default_value='true',
         description='Set to true for drone to auto-takeoff and begin mission on startup'
+    )
+    target_altitude_arg = DeclareLaunchArgument(
+        'target_altitude',
+        default_value='1.22',
+        description='Target cruising altitude in meters (default: 1.22m / 4.0 ft)'
     )
     rviz_arg = DeclareLaunchArgument(
         'rviz',
@@ -103,8 +113,8 @@ def generate_launch_description():
         output='screen'
     )
 
-    # 4. Real-time 2D SLAM Mapping Node (slam_toolbox)
-    slam_node = Node(
+    # 4. Real-time 2D SLAM Mapping Node (slam_toolbox with ROS 2 Jazzy Lifecycle Auto-Activation)
+    slam_node = LifecycleNode(
         package='slam_toolbox',
         executable='async_slam_toolbox_node',
         name='slam_toolbox',
@@ -112,7 +122,30 @@ def generate_launch_description():
             slam_config,
             {'use_sim_time': True}
         ],
-        output='screen'
+        output='screen',
+        namespace=''
+    )
+
+    configure_slam_event = EmitEvent(
+        event=ChangeState(
+            lifecycle_node_matcher=matches_action(slam_node),
+            transition_id=Transition.TRANSITION_CONFIGURE
+        )
+    )
+
+    activate_slam_event = RegisterEventHandler(
+        OnStateTransition(
+            target_lifecycle_node=slam_node,
+            start_state="configuring",
+            goal_state="inactive",
+            entities=[
+                LogInfo(msg="[NIDAR SLAM] slam_toolbox auto-activating for 2D mapping..."),
+                EmitEvent(event=ChangeState(
+                    lifecycle_node_matcher=matches_action(slam_node),
+                    transition_id=Transition.TRANSITION_ACTIVATE
+                ))
+            ]
+        )
     )
 
     # 5. Dual-LiDAR Drone Autonomy Controller Node
@@ -121,7 +154,7 @@ def generate_launch_description():
         executable='drone_autonomy_controller.py',
         parameters=[{
             'auto_start': LaunchConfiguration('auto_start'),
-            'target_altitude': 1.20,
+            'target_altitude': LaunchConfiguration('target_altitude'),
             'max_horizontal_speed': 0.45,
             'wall_safety_dist': 0.55,
             'emergency_dist': 0.25,
@@ -163,6 +196,7 @@ def generate_launch_description():
         gz_resource_path,
         headless_arg,
         auto_start_arg,
+        target_altitude_arg,
         rviz_arg,
         gz_sim_gui,
         gz_sim_headless,
@@ -171,6 +205,8 @@ def generate_launch_description():
         tf_tf02,
         tf_camera,
         slam_node,
+        configure_slam_event,
+        activate_slam_event,
         autonomy_node,
         survivor_node,
         gcs_node,

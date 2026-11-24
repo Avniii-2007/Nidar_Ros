@@ -20,10 +20,10 @@
         </inertia>
       </inertial>
       <collision name="X3/base_link_collision">
-        <pose>0 0 0 0 0 0</pose>
+        <pose>0 0 -0.02 0 0 0</pose>
         <geometry>
           <box>
-            <size>0.47 0.47 0.11</size>
+            <size>0.44 0.44 0.18</size>
           </box>
         </geometry>
       </collision>
@@ -32,30 +32,9 @@
         <geometry>
           <mesh>
             <scale>1 1 1</scale>
-            <uri>model://px5_drone/meshes/x3.dae</uri>
+            <uri>model://px5_drone/meshes/airmouse_frame.dae</uri>
           </mesh>
         </geometry>
-      </visual>
-      <!-- Propeller Guards (Rule compliance: full protection of rotor operating area) -->
-      <visual name="guard_front_right">
-        <pose>0.13 -0.22 0.023 0 0 0</pose>
-        <geometry><cylinder><radius>0.14</radius><length>0.02</length></cylinder></geometry>
-        <material><ambient>0.8 0.1 0.1 0.7</ambient><diffuse>0.9 0.1 0.1 0.7</diffuse></material>
-      </visual>
-      <visual name="guard_back_left">
-        <pose>-0.13 0.20 0.023 0 0 0</pose>
-        <geometry><cylinder><radius>0.14</radius><length>0.02</length></cylinder></geometry>
-        <material><ambient>0.8 0.1 0.1 0.7</ambient><diffuse>0.9 0.1 0.1 0.7</diffuse></material>
-      </visual>
-      <visual name="guard_front_left">
-        <pose>0.13 0.22 0.023 0 0 0</pose>
-        <geometry><cylinder><radius>0.14</radius><length>0.02</length></cylinder></geometry>
-        <material><ambient>0.1 0.1 0.8 0.7</ambient><diffuse>0.1 0.1 0.9 0.7</diffuse></material>
-      </visual>
-      <visual name="guard_back_right">
-        <pose>-0.13 -0.20 0.023 0 0 0</pose>
-        <geometry><cylinder><radius>0.14</radius><length>0.02</length></cylinder></geometry>
-        <material><ambient>0.1 0.1 0.8 0.7</ambient><diffuse>0.1 0.1 0.9 0.7</diffuse></material>
       </visual>
 
       <!-- 2D LiDAR Sensor 1: Horizontal 360-degree (for Indoor SLAM & 2D Obstacle Detection) -->
@@ -178,7 +157,7 @@
 
     <!-- Rotor 0 (Front-Right, CCW) -->
     <link name="X3/rotor_0">
-      <pose>0.13 -0.22 0.023 0 0 0</pose>
+      <pose>0.1315 -0.1315 0.0325 0 0 0</pose>
       <inertial>
         <mass>0.005</mass>
         <inertia>
@@ -188,18 +167,18 @@
         </inertia>
       </inertial>
       <collision name="X3/rotor_0_collision">
-        <geometry><cylinder><length>0.005</length><radius>0.1</radius></cylinder></geometry>
+        <geometry><cylinder><length>0.01</length><radius>0.067</radius></cylinder></geometry>
       </collision>
       <visual name="X3/rotor_0_visual">
         <geometry>
           <mesh>
-            <scale>0.1 0.1 0.1</scale>
-            <uri>model://px5_drone/meshes/propeller_ccw.dae</uri>
+            <scale>1 1 1</scale>
+            <uri>model://px5_drone/meshes/airmouse_propeller.dae</uri>
           </mesh>
         </geometry>
         <material>
-          <ambient>0.1 0.2 0.8 1</ambient>
-          <diffuse>0.1 0.3 0.9 1</diffuse>
+          <ambient>0.2 0.2 0.2 1</ambient>
+          <diffuse>0.3 0.3 0.3 1</diffuse>
         </material>
       </visual>
       <gravity>1</gravity>
@@ -215,7 +194,7 @@
 
     <!-- Rotor 1 (Back-Left, CCW) -->
     <link name="X3/rotor_1">
-      <pose>-0.13 0.2 0.023 0 0 0</pose>
+      <pose>-0.1315 0.1315 0.0325 0 0 0</pose>
       <inertial>
         <mass>0.005</mass>
         <inertia>
@@ -225,18 +204,18 @@
         </inertia>
       </inertial>
       <collision name="X3/rotor_1_collision">
-        <geometry><cylinder><length>0.005</length><radius>0.1</radius></cylinder></geometry>
+        <geometry><cylinder><length>0.01</length><radius>0.067</radius></cylinder></geometry>
       </collision>
       <visual name="X3/rotor_1_visual">
         <geometry>
           <mesh>
-            <scale>0.1 0.1 0.1</scale>
-            <uri>model://px5_drone/meshes/propeller_ccw.dae</uri>
+            <scale>1 1 1</scale>
+            <uri>model://px5_drone/meshes/airmouse_propeller.dae</uri>
           </mesh>
         </geometry>
         <material>
-          <ambient>0.8 0.1 0.1 1</ambient>
-          <diffuse>0.9 0.1 0.1 1</diffuse>
+          <ambient>0.2 0.2 0.2 1</ambient>
+          <diffuse>0.3 0.3 0.3 1</diffuse>
         </material>
       </visual>
       <gravity>1</gravity>
@@ -252,7 +231,7 @@
 
     <!-- Rotor 2 (Front-Left, CW) -->
     <link name="X3/rotor_2">
-      <pose>0.13 0.22 0.023 0 0 0</pose>
+      <pose>0.1315 0.1315 0.0325 0 0 0</pose>
       <inertial>
         <mass>0.005</mass>
         <inertia>
@@ -262,18 +241,18 @@
         </inertia>
       </inertial>
       <collision name="X3/rotor_2_collision">
-        <geometry><cylinder><length>0.005</length><radius>0.1</radius></cylinder></geometry>
+        <geometry><cylinder><length>0.01</length><radius>0.067</radius></cylinder></geometry>
       </collision>
       <visual name="X3/rotor_2_visual">
         <geometry>
           <mesh>
-            <scale>0.1 0.1 0.1</scale>
-            <uri>model://px5_drone/meshes/propeller_cw.dae</uri>
+            <scale>1 1 1</scale>
+            <uri>model://px5_drone/meshes/airmouse_propeller.dae</uri>
           </mesh>
         </geometry>
         <material>
-          <ambient>0.1 0.2 0.8 1</ambient>
-          <diffuse>0.1 0.3 0.9 1</diffuse>
+          <ambient>0.2 0.2 0.2 1</ambient>
+          <diffuse>0.3 0.3 0.3 1</diffuse>
         </material>
       </visual>
       <gravity>1</gravity>
@@ -289,7 +268,7 @@
 
     <!-- Rotor 3 (Back-Right, CW) -->
     <link name="X3/rotor_3">
-      <pose>-0.13 -0.2 0.023 0 0 0</pose>
+      <pose>-0.1315 -0.1315 0.0325 0 0 0</pose>
       <inertial>
         <mass>0.005</mass>
         <inertia>
@@ -299,18 +278,18 @@
         </inertia>
       </inertial>
       <collision name="X3/rotor_3_collision">
-        <geometry><cylinder><length>0.005</length><radius>0.1</radius></cylinder></geometry>
+        <geometry><cylinder><length>0.01</length><radius>0.067</radius></cylinder></geometry>
       </collision>
       <visual name="X3/rotor_3_visual">
         <geometry>
           <mesh>
-            <scale>0.1 0.1 0.1</scale>
-            <uri>model://px5_drone/meshes/propeller_cw.dae</uri>
+            <scale>1 1 1</scale>
+            <uri>model://px5_drone/meshes/airmouse_propeller.dae</uri>
           </mesh>
         </geometry>
         <material>
-          <ambient>0.8 0.1 0.1 1</ambient>
-          <diffuse>0.9 0.1 0.1 1</diffuse>
+          <ambient>0.2 0.2 0.2 1</ambient>
+          <diffuse>0.3 0.3 0.3 1</diffuse>
         </material>
       </visual>
       <gravity>1</gravity>
@@ -418,12 +397,12 @@
       <commandSubTopic>gazebo/command/twist</commandSubTopic>
       <enableSubTopic>enable</enableSubTopic>
       <comLinkName>X3/base_link</comLinkName>
-      <velocityGain>2.7 2.7 2.7</velocityGain>
-      <attitudeGain>2 3 0.15</attitudeGain>
-      <angularRateGain>0.4 0.52 0.18</angularRateGain>
-      <maximumLinearAcceleration>1.5 1.5 1.5</maximumLinearAcceleration>
-      <maximumLinearVelocity>1.5 1.5 0.8</maximumLinearVelocity>
-      <maximumAngularVelocity>1.5 1.5 1.5</maximumAngularVelocity>
+      <velocityGain>3.0 3.0 3.0</velocityGain>
+      <attitudeGain>3.0 3.0 0.25</attitudeGain>
+      <angularRateGain>0.5 0.5 0.25</angularRateGain>
+      <maximumLinearAcceleration>2.0 2.0 2.0</maximumLinearAcceleration>
+      <maximumLinearVelocity>1.8 1.8 1.0</maximumLinearVelocity>
+      <maximumAngularVelocity>2.0 2.0 2.0</maximumAngularVelocity>
 
       <rotorConfiguration>
         <rotor>

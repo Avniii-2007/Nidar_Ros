@@ -24,23 +24,38 @@ export __EGL_VENDOR_LIBRARY_FILENAMES=/usr/share/glvnd/egl_vendor.d/10_nvidia.js
 HEADLESS="true"
 AUTO_START="true"
 RVIZ="false"
+ALTITUDE="1.22"
 
-for arg in "$@"; do
-  case "$arg" in
+while [[ $# -gt 0 ]]; do
+  case "$1" in
     --headless|-s)
       HEADLESS="true"
+      shift
       ;;
     --gui|-g)
       HEADLESS="false"
+      shift
       ;;
     --auto-start|-a)
       AUTO_START="true"
+      shift
       ;;
     --manual|--no-auto-start|-m)
       AUTO_START="false"
+      shift
       ;;
     --rviz|-r)
       RVIZ="true"
+      shift
+      ;;
+    --alt*|--altitude*)
+      if [[ "$1" == *"="* ]]; then
+        ALTITUDE="${1#*=}"
+        shift
+      else
+        ALTITUDE="$2"
+        shift 2
+      fi
       ;;
     --help|-h)
       echo "Usage: ./run_autonomous.sh [options]"
@@ -50,7 +65,11 @@ for arg in "$@"; do
       echo "  --auto-start, -a       Automatically initiate takeoff and maze exploration (DEFAULT: true)"
       echo "  --manual, -m           Start in IDLE state (manual takeoff via GCS or terminal)"
       echo "  --rviz, -r             Launch RViz2 3D/2D visualization"
+      echo "  --altitude, --alt      Cruising altitude in meters (default: 1.22m / 4.0 ft)"
       exit 0
+      ;;
+    *)
+      shift
       ;;
   esac
 done
@@ -112,4 +131,5 @@ echo "==========================================================================
 ros2 launch nidar_gazebo autonomous_drone.launch.py \
     headless:="${HEADLESS}" \
     auto_start:="${AUTO_START}" \
-    rviz:="${RVIZ}"
+    rviz:="${RVIZ}" \
+    target_altitude:="${ALTITUDE}"

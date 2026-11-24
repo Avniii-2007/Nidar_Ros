@@ -88,19 +88,49 @@
       </link>
     </model>
 
-    <!-- Faint floor grid lines -->
+    <!-- 1m x 1m Floor Grid Lines (15m x 15m Arena) -->
     <model name="floor_guide_lines">
       <static>true</static>
       <pose>0 0 0.002 0 0 0</pose>
       <link name="link">
         <visual name="axis_x">
+          <pose>0 0 0 0 0 0</pose>
           <geometry><box><size>14.9 0.03 0.001</size></box></geometry>
-          <material><ambient>0.45 0.47 0.50 0.5</ambient><diffuse>0.45 0.47 0.50 0.5</diffuse></material>
+          <material><ambient>0.40 0.42 0.45 0.5</ambient><diffuse>0.40 0.42 0.45 0.5</diffuse></material>
         </visual>
         <visual name="axis_y">
+          <pose>0 0 0 0 0 0</pose>
           <geometry><box><size>0.03 14.9 0.001</size></box></geometry>
-          <material><ambient>0.45 0.47 0.50 0.5</ambient><diffuse>0.45 0.47 0.50 0.5</diffuse></material>
+          <material><ambient>0.40 0.42 0.45 0.5</ambient><diffuse>0.40 0.42 0.45 0.5</diffuse></material>
         </visual>
+        <visual name="grid_x_0"><pose>-6.5 0 0 0 0 0</pose><geometry><box><size>0.015 14.8 0.001</size></box></geometry><material><ambient>0.48 0.50 0.53 0.4</ambient><diffuse>0.48 0.50 0.53 0.4</diffuse></material></visual>
+        <visual name="grid_x_1"><pose>-5.5 0 0 0 0 0</pose><geometry><box><size>0.015 14.8 0.001</size></box></geometry><material><ambient>0.48 0.50 0.53 0.4</ambient><diffuse>0.48 0.50 0.53 0.4</diffuse></material></visual>
+        <visual name="grid_x_2"><pose>-4.5 0 0 0 0 0</pose><geometry><box><size>0.015 14.8 0.001</size></box></geometry><material><ambient>0.48 0.50 0.53 0.4</ambient><diffuse>0.48 0.50 0.53 0.4</diffuse></material></visual>
+        <visual name="grid_x_3"><pose>-3.5 0 0 0 0 0</pose><geometry><box><size>0.015 14.8 0.001</size></box></geometry><material><ambient>0.48 0.50 0.53 0.4</ambient><diffuse>0.48 0.50 0.53 0.4</diffuse></material></visual>
+        <visual name="grid_x_4"><pose>-2.5 0 0 0 0 0</pose><geometry><box><size>0.015 14.8 0.001</size></box></geometry><material><ambient>0.48 0.50 0.53 0.4</ambient><diffuse>0.48 0.50 0.53 0.4</diffuse></material></visual>
+        <visual name="grid_x_5"><pose>-1.5 0 0 0 0 0</pose><geometry><box><size>0.015 14.8 0.001</size></box></geometry><material><ambient>0.48 0.50 0.53 0.4</ambient><diffuse>0.48 0.50 0.53 0.4</diffuse></material></visual>
+        <visual name="grid_x_6"><pose>-0.5 0 0 0 0 0</pose><geometry><box><size>0.015 14.8 0.001</size></box></geometry><material><ambient>0.48 0.50 0.53 0.4</ambient><diffuse>0.48 0.50 0.53 0.4</diffuse></material></visual>
+        <visual name="grid_x_7"><pose>0.5 0 0 0 0 0</pose><geometry><box><size>0.015 14.8 0.001</size></box></geometry><material><ambient>0.48 0.50 0.53 0.4</ambient><diffuse>0.48 0.50 0.53 0.4</diffuse></material></visual>
+        <visual name="grid_x_8"><pose>1.5 0 0 0 0 0</pose><geometry><box><size>0.015 14.8 0.001</size></box></geometry><material><ambient>0.48 0.50 0.53 0.4</ambient><diffuse>0.48 0.50 0.53 0.4</diffuse></material></visual>
+        <visual name="grid_x_9"><pose>2.5 0 0 0 0 0</pose><geometry><box><size>0.015 14.8 0.001</size></box></geometry><material><ambient>0.48 0.50 0.53 0.4</ambient><diffuse>0.48 0.50 0.53 0.4</diffuse></material></visual>
+        <visual name="grid_x_10"><pose>3.5 0 0 0 0 0</pose><geometry><box><size>0.015 14.8 0.001</size></box></geometry><material><ambient>0.48 0.50 0.53 0.4</ambient><diffuse>0.48 0.50 0.53 0.4</diffuse></material></visual>
+        <visual name="grid_x_11"><pose>4.5 0 0 0 0 0</pose><geometry><box><size>0.015 14.8 0.001</size></box></geometry><material><ambient>0.48 0.50 0.53 0.4</ambient><diffuse>0.48 0.50 0.53 0.4</diffuse></material></visual>
+        <visual name="grid_x_12"><pose>5.5 0 0 0 0 0</pose><geometry><box><size>0.015 14.8 0.001</size></box></geometry><material><ambient>0.48 0.50 0.53 0.4</ambient><diffuse>0.48 0.50 0.53 0.4</diffuse></material></visual>
+        <visual name="grid_x_13"><pose>6.5 0 0 0 0 0</pose><geometry><box><size>0.015 14.8 0.001</size></box></geometry><material><ambient>0.48 0.50 0.53 0.4</ambient><diffuse>0.48 0.50 0.53 0.4</diffuse></material></visual>
+        <visual name="grid_y_0"><pose>0 -6.5 0 0 0 0</pose><geometry><box><size>14.8 0.015 0.001</size></box></geometry><material><ambient>0.48 0.50 0.53 0.4</ambient><diffuse>0.48 0.50 0.53 0.4</diffuse></material></visual>
+        <visual name="grid_y_1"><pose>0 -5.5 0 0 0 0</pose><geometry><box><size>14.8 0.015 0.001</size></box></geometry><material><ambient>0.48 0.50 0.53 0.4</ambient><diffuse>0.48 0.50 0.53 0.4</diffuse></material></visual>
+        <visual name="grid_y_2"><pose>0 -4.5 0 0 0 0</pose><geometry><box><size>14.8 0.015 0.001</size></box></geometry><material><ambient>0.48 0.50 0.53 0.4</ambient><diffuse>0.48 0.50 0.53 0.4</diffuse></material></visual>
+        <visual name="grid_y_3"><pose>0 -3.5 0 0 0 0</pose><geometry><box><size>14.8 0.015 0.001</size></box></geometry><material><ambient>0.48 0.50 0.53 0.4</ambient><diffuse>0.48 0.50 0.53 0.4</diffuse></material></visual>
+        <visual name="grid_y_4"><pose>0 -2.5 0 0 0 0</pose><geometry><box><size>14.8 0.015 0.001</size></box></geometry><material><ambient>0.48 0.50 0.53 0.4</ambient><diffuse>0.48 0.50 0.53 0.4</diffuse></material></visual>
+        <visual name="grid_y_5"><pose>0 -1.5 0 0 0 0</pose><geometry><box><size>14.8 0.015 0.001</size></box></geometry><material><ambient>0.48 0.50 0.53 0.4</ambient><diffuse>0.48 0.50 0.53 0.4</diffuse></material></visual>
+        <visual name="grid_y_6"><pose>0 -0.5 0 0 0 0</pose><geometry><box><size>14.8 0.015 0.001</size></box></geometry><material><ambient>0.48 0.50 0.53 0.4</ambient><diffuse>0.48 0.50 0.53 0.4</diffuse></material></visual>
+        <visual name="grid_y_7"><pose>0 0.5 0 0 0 0</pose><geometry><box><size>14.8 0.015 0.001</size></box></geometry><material><ambient>0.48 0.50 0.53 0.4</ambient><diffuse>0.48 0.50 0.53 0.4</diffuse></material></visual>
+        <visual name="grid_y_8"><pose>0 1.5 0 0 0 0</pose><geometry><box><size>14.8 0.015 0.001</size></box></geometry><material><ambient>0.48 0.50 0.53 0.4</ambient><diffuse>0.48 0.50 0.53 0.4</diffuse></material></visual>
+        <visual name="grid_y_9"><pose>0 2.5 0 0 0 0</pose><geometry><box><size>14.8 0.015 0.001</size></box></geometry><material><ambient>0.48 0.50 0.53 0.4</ambient><diffuse>0.48 0.50 0.53 0.4</diffuse></material></visual>
+        <visual name="grid_y_10"><pose>0 3.5 0 0 0 0</pose><geometry><box><size>14.8 0.015 0.001</size></box></geometry><material><ambient>0.48 0.50 0.53 0.4</ambient><diffuse>0.48 0.50 0.53 0.4</diffuse></material></visual>
+        <visual name="grid_y_11"><pose>0 4.5 0 0 0 0</pose><geometry><box><size>14.8 0.015 0.001</size></box></geometry><material><ambient>0.48 0.50 0.53 0.4</ambient><diffuse>0.48 0.50 0.53 0.4</diffuse></material></visual>
+        <visual name="grid_y_12"><pose>0 5.5 0 0 0 0</pose><geometry><box><size>14.8 0.015 0.001</size></box></geometry><material><ambient>0.48 0.50 0.53 0.4</ambient><diffuse>0.48 0.50 0.53 0.4</diffuse></material></visual>
+        <visual name="grid_y_13"><pose>0 6.5 0 0 0 0</pose><geometry><box><size>14.8 0.015 0.001</size></box></geometry><material><ambient>0.48 0.50 0.53 0.4</ambient><diffuse>0.48 0.50 0.53 0.4</diffuse></material></visual>
       </link>
     </model>
 
@@ -127,9 +157,10 @@
       </link>
     </model>
 
-    <!-- ==================== DESIGNATED LAUNCH & EXIT PADS ==================== -->
-    <!-- Fixed 2ft x 2ft (0.61m x 0.61m) Launch Pad inside ENTRY Room -->
-    <model name="launch_area_pad">
+    <!-- ==================== DESIGNATED SINGLE ENTRY & EXIT PAD ==================== -->
+    <!-- Fixed 2ft x 2ft (0.61m x 0.61m) Single Combined Entry & Exit Pad inside ENTRY Room -->
+    <!-- Serves as the single designated takeoff and landing / recovery location for the drone -->
+    <model name="entry_exit_pad">
       <static>true</static>
       <pose>-5.8 -6.0 0.005 0 0 0</pose>
       <link name="link">
@@ -140,33 +171,31 @@
         <visual name="pad_inner">
           <pose>0 0 0.002 0 0 0</pose>
           <geometry><box><size>0.48 0.48 0.005</size></box></geometry>
-          <material><ambient>0.1 0.25 0.1 1</ambient><diffuse>0.1 0.25 0.1 1</diffuse></material>
+          <material><ambient>0.08 0.20 0.10 1</ambient><diffuse>0.10 0.25 0.12 1</diffuse></material>
         </visual>
-        <visual name="launch_h">
+        <visual name="helipad_ring">
           <pose>0 0 0.004 0 0 0</pose>
-          <geometry><cylinder><radius>0.12</radius><length>0.005</length></cylinder></geometry>
+          <geometry><cylinder><radius>0.18</radius><length>0.005</length></cylinder></geometry>
           <material><ambient>1.0 1.0 1.0 1</ambient><diffuse>1.0 1.0 1.0 1</diffuse></material>
         </visual>
-      </link>
-    </model>
-
-    <!-- Designated 2ft x 2ft Exit Pad in South-East Room -->
-    <model name="exit_area_pad">
-      <static>true</static>
-      <pose>5.5 -5.5 0.005 0 0 0</pose>
-      <link name="link">
-        <visual name="pad_border">
-          <geometry><box><size>0.61 0.61 0.005</size></box></geometry>
-          <material><ambient>1.0 0.5 0.0 1</ambient><diffuse>1.0 0.6 0.0 1</diffuse></material>
+        <visual name="helipad_ring_inner">
+          <pose>0 0 0.005 0 0 0</pose>
+          <geometry><cylinder><radius>0.14</radius><length>0.005</length></cylinder></geometry>
+          <material><ambient>0.08 0.20 0.10 1</ambient><diffuse>0.10 0.25 0.12 1</diffuse></material>
         </visual>
-        <visual name="pad_inner">
-          <pose>0 0 0.002 0 0 0</pose>
-          <geometry><box><size>0.48 0.48 0.005</size></box></geometry>
-          <material><ambient>0.3 0.15 0.0 1</ambient><diffuse>0.3 0.15 0.0 1</diffuse></material>
+        <visual name="h_bar_left">
+          <pose>-0.07 0 0.006 0 0 0</pose>
+          <geometry><box><size>0.025 0.18 0.005</size></box></geometry>
+          <material><ambient>1.0 1.0 1.0 1</ambient><diffuse>1.0 1.0 1.0 1</diffuse></material>
         </visual>
-        <visual name="exit_indicator">
-          <pose>0 0 0.004 0 0 0</pose>
-          <geometry><cylinder><radius>0.12</radius><length>0.005</length></cylinder></geometry>
+        <visual name="h_bar_right">
+          <pose>0.07 0 0.006 0 0 0</pose>
+          <geometry><box><size>0.025 0.18 0.005</size></box></geometry>
+          <material><ambient>1.0 1.0 1.0 1</ambient><diffuse>1.0 1.0 1.0 1</diffuse></material>
+        </visual>
+        <visual name="h_bar_center">
+          <pose>0 0 0.006 0 0 0</pose>
+          <geometry><box><size>0.12 0.028 0.005</size></box></geometry>
           <material><ambient>1.0 1.0 1.0 1</ambient><diffuse>1.0 1.0 1.0 1</diffuse></material>
         </visual>
       </link>
@@ -658,7 +687,7 @@
     </model>
 
     <!-- ==================== 9. ROOM 7: SOUTH-EAST ROOM (Front-Right) ==================== -->
-    <!-- Enclosed between X = 3.5 to 7.5, Y = -7.5 to -1.5. Contains Exit Pad & Survivor 6. -->
+    <!-- Enclosed between X = 3.5 to 7.5, Y = -7.5 to -1.5. Contains Survivor 6. -->
     <model name="room_7_south_east">
       <static>true</static>
       <pose>0 0 1.10 0 0 0</pose>
@@ -688,11 +717,12 @@
 
     <!-- ==================== 6 SURVIVOR / HUMAN FIGURES ==================== -->
     <!-- Modeled with realistic seated postures, clothing, and high-visibility identifiers -->
+    <!-- Distributed realistically across room corners and perimeter locations (not just centers) -->
 
-    <!-- Survivor 1: Person sitting inside the ENTRY room (Front-Left, exactly matching photo) -->
+    <!-- Survivor 1: Person sitting in the South-West Corner of the ENTRY room -->
     <model name="survivor_1_entry_bay">
       <static>true</static>
-      <pose>-6.8 -5.5 0.35 0 0 0.4</pose>
+      <pose>-7.10 -7.10 0.35 0 0 0.785</pose>
       <link name="link">
         <collision name="col"><geometry><cylinder><radius>0.24</radius><length>0.70</length></cylinder></geometry></collision>
         <!-- Head with dark hair -->
@@ -707,10 +737,10 @@
       </link>
     </model>
 
-    <!-- Survivor 2: Inside North-West Room -->
+    <!-- Survivor 2: In the North-West Corner of North-West Room -->
     <model name="survivor_2_north_west">
       <static>true</static>
-      <pose>-5.8 5.5 0.35 0 0 -1.2</pose>
+      <pose>-7.10 7.10 0.35 0 0 -0.785</pose>
       <link name="link">
         <collision name="col"><geometry><cylinder><radius>0.24</radius><length>0.70</length></cylinder></geometry></collision>
         <visual name="head"><pose>0 0 0.28 0 0 0</pose><geometry><sphere><radius>0.13</radius></sphere></geometry><material><ambient>0.8 0.6 0.5 1</ambient><diffuse>0.85 0.65 0.55 1</diffuse></material></visual>
@@ -720,10 +750,10 @@
       </link>
     </model>
 
-    <!-- Survivor 3: Inside GPC Command Room -->
+    <!-- Survivor 3: In the North-East Corner of GPC Command Room -->
     <model name="survivor_3_gpc_room">
       <static>true</static>
-      <pose>0.8 6.0 0.35 0 0 0.8</pose>
+      <pose>2.10 7.10 0.35 0 0 -2.356</pose>
       <link name="link">
         <collision name="col"><geometry><cylinder><radius>0.24</radius><length>0.70</length></cylinder></geometry></collision>
         <visual name="head"><pose>0 0 0.28 0 0 0</pose><geometry><sphere><radius>0.13</radius></sphere></geometry><material><ambient>0.8 0.6 0.5 1</ambient><diffuse>0.85 0.65 0.55 1</diffuse></material></visual>
@@ -733,10 +763,10 @@
       </link>
     </model>
 
-    <!-- Survivor 4: Inside North-East Room -->
+    <!-- Survivor 4: In the South-East Corner of North-East Room -->
     <model name="survivor_4_north_east">
       <static>true</static>
-      <pose>6.0 5.5 0.35 0 0 -2.4</pose>
+      <pose>7.10 3.90 0.35 0 0 2.356</pose>
       <link name="link">
         <collision name="col"><geometry><cylinder><radius>0.24</radius><length>0.70</length></cylinder></geometry></collision>
         <visual name="head"><pose>0 0 0.28 0 0 0</pose><geometry><sphere><radius>0.13</radius></sphere></geometry><material><ambient>0.8 0.6 0.5 1</ambient><diffuse>0.85 0.65 0.55 1</diffuse></material></visual>
@@ -746,10 +776,10 @@
       </link>
     </model>
 
-    <!-- Survivor 5: Person sitting on the far right against the wall (Middle-Right, exactly matching photo) -->
+    <!-- Survivor 5: In the North-West Corner of East-Central Room -->
     <model name="survivor_5_east_central">
       <static>true</static>
-      <pose>6.8 1.0 0.35 0 0 3.14</pose>
+      <pose>3.90 3.10 0.35 0 0 -0.785</pose>
       <link name="link">
         <collision name="col"><geometry><cylinder><radius>0.24</radius><length>0.70</length></cylinder></geometry></collision>
         <!-- Head with dark hair -->
@@ -763,10 +793,10 @@
       </link>
     </model>
 
-    <!-- Survivor 6: Inside South-East Room -->
+    <!-- Survivor 6: In the North-East Corner of South-East Room -->
     <model name="survivor_6_south_east">
       <static>true</static>
-      <pose>6.2 -4.0 0.35 0 0 -0.5</pose>
+      <pose>7.10 -1.90 0.35 0 0 -2.356</pose>
       <link name="link">
         <collision name="col"><geometry><cylinder><radius>0.24</radius><length>0.70</length></cylinder></geometry></collision>
         <visual name="head"><pose>0 0 0.28 0 0 0</pose><geometry><sphere><radius>0.13</radius></sphere></geometry><material><ambient>0.8 0.6 0.5 1</ambient><diffuse>0.85 0.65 0.55 1</diffuse></material></visual>
@@ -804,7 +834,7 @@
     <include>
       <uri>model://px5_drone</uri>
       <name>px5_drone</name>
-      <pose>-5.8 -6.0 0.05 0 0 0</pose>
+      <pose>-5.8 -6.0 0.12 0 0 0</pose>
     </include>
 
   </world>

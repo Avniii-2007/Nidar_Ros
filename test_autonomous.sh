@@ -62,7 +62,7 @@ case "$CMD" in
     echo "Usage: ./test_autonomous.sh [command]"
     echo ""
     echo "Available commands:"
-    echo "  takeoff    Climb to 1.20m cruising altitude using Downward ToF LiDAR"
+    echo "  takeoff    Climb to 1.22m (4.0 ft) cruising altitude using Downward ToF LiDAR"
     echo "  explore    Autonomous corridor centering & maze exploration using 2D LiDAR"
     echo "  hover      Hold current position and altitude"
     echo "  rth        Autonomous Return-To-Home to designated entry/exit pad"
